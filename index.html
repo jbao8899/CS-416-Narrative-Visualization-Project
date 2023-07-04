@@ -4,16 +4,16 @@
 		<script src='https://d3js.org/d3.v5.min.js'></script>
   	</head>
 	<body>
-		<p id="text">AAA</p>
-		<button onclick="changeText()" style="height:100px;width:100px" />
+		<h1 id="text">AAA</h1>
+		<button onclick="changeText()" style="height:25px;width:50px" />
 	</body>
 	<script>
 		function changeText() {
-			if (document.getElementById("text").textContent == "AAA") {
-				document.getElementById("myList").textContent = "BBB";
+			if (document.getElementById("text").innerHTML == "AAA") {
+				document.getElementById("text").innerHTML = "BBB";
 			}
 			else {
-				document.getElementById("myList").textContent = "AAA";
+				document.getElementById("text").innerHTML = "AAA";
 			}
 		}
 	</script>
