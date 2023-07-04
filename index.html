@@ -4,6 +4,17 @@
 		<script src='https://d3js.org/d3.v5.min.js'></script>
   	</head>
 	<body>
-		<p>Hello World!</p>
+		<p id="text">AAA</p>
+		<button onclick="changeText()" />
 	</body>
+	<script>
+		function changeText() {
+			if (document.getElementById("text").textContent == "AAA") {
+				document.getElementById("myList").textContent = "BBB";
+			}
+			else {
+				document.getElementById("myList").textContent = "AAA";
+			}
+		}
+	</script>
 </html>
