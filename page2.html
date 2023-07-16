@@ -23,7 +23,7 @@
 
 	<script>
 		// function init() {
-            async function init() {
+        async function init() {
 			// MY CODE: 
 					
 			// var data = d3.csv("project_2_scatterplot_data.csv");
@@ -96,7 +96,7 @@
                 return d3.ascending(a.WeightedMeanFertilityRate, b.WeightedMeanFertilityRate)
             })
 
-            console.log(data)
+            // console.log(data)
             
             var xScale = d3.scaleBand()
                            .domain(["East Asia & Pacific",
@@ -107,7 +107,7 @@
                                     "Middle East & North Africa",
                                     "Sub-Saharan Africa"])
                                     .range([0, 400])
-			var yScale = d3.scaleLinear().domain([0, 5]).range([400, 0])
+			var yScale = d3.scaleLinear().domain([0, 9]).range([400, 0])
 
             // consistent color scheme 
             var colorScale = d3.scaleOrdinal()
@@ -136,10 +136,10 @@
 			  .enter()
 			  .append("rect")
               .attr("x", function(d, i) { return 14 + ((400 / 7) * i) })
-              .attr("y", function(d) { return 400 - ((d.WeightedMeanFertilityRate / 5) * 400) })
+              .attr("y", function(d) { return 400 - ((d.WeightedMeanFertilityRate / 9) * 400) })
               .attr("width", 200 / 7)
-              .attr("height", function(d) { return (d.WeightedMeanFertilityRate / 5) * 400 })
-              .style("fill", function(d, i) {return colorScale(d.Region);});
+              .attr("height", function(d) { return (d.WeightedMeanFertilityRate / 9) * 400 })
+              .style("fill", function(d) {return colorScale(d.Region);});
 					  
 			d3.select("#svgForPlot")
 			  .append("g")
@@ -151,7 +151,6 @@
 			  .attr("transform", "translate(100, 500)")
 			  .call(d3.axisBottom(xScale)
 					  .tickFormat(""));
-
 
             // https://stackoverflow.com/questions/11189284/d3-axis-labeling
             d3.select("#svgForPlot")

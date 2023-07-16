@@ -26,7 +26,7 @@
 	</body>
 	<script>
 		// function init() {
-            async function init() {
+        async function init() {
 			// MY CODE: 
 					
 			// var data = d3.csv("project_2_scatterplot_data.csv");
@@ -89,10 +89,10 @@
                           }
                       );
             
-            console.log(data);
+            // console.log(data);
 
             var xScale = d3.scaleLinear().domain([1960, 2021]).range([0, 400]);
-            var yScale = d3.scaleLinear().domain([0, 6]).range([400, 0])
+            var yScale = d3.scaleLinear().domain([0, 9]).range([400, 0])
 
             // https://d3-graph-gallery.com/graph/line_basic.html
             d3.select("#svgForPlot")
