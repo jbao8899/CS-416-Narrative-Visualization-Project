@@ -9,8 +9,10 @@
 		</div> -->
 
         <div>
-			<svg width=600 height=600>
-			</svg>
+			<svg id="svgForPlot" width=600 height=600></svg>
+
+            
+            <svg id="svgForLegend" height=375 width=300></svg>
 		</div>
 
 		<div>
@@ -21,63 +23,130 @@
 
 	<script>
 		// function init() {
-		async function init() {
+            async function init() {
 			// MY CODE: 
 					
 			// var data = d3.csv("project_2_scatterplot_data.csv");
 			var data = await d3.csv("https://raw.githubusercontent.com/jbao8899/CS-416-Narrative-Visualization-Project/main/project_2_data.csv");
 			
-            // making bar chart for a certain year
+            // console.log(data.length)
+
+            // making scatterplot for a certain year
             data = data.filter(function(d) { return d.Year == "2020" })
-            // get rid of data for which fertility rate is missing
+            // get rid of data for which fertility rate or mortality rate under 5 are missing
             data = data.filter(function(d) { return d.FertilityRate != "" })
-            
-            // What does this do????
-            // https://stackoverflow.com/a/40206462
-            data = d3.nest()
-                     .key(
-                          function(d) {
-                              return d.Region; 
-                          }
-                      )
-                      .rollup(
-                              function(leaves) {
-                                  return d3.mean(leaves, function(d) { return d.FertilityRate; });
-                              })
-                      .entries(data)
-                      .map(function(d) {
-                          return { Region: d.key, FertilityRate: d.value};
-                      });
+            data = data.filter(function(d) { return d.Under5DeathsPer1000 != "" })
 
-            console.log(data)
-            
-            var xScale = d3.scaleBand().domain([0, 1, 2, 3, 4, 5, 6]).range([0, 400])
-			var yScale = d3.scaleLinear().domain([0, 5]).range([400, 0])
+            // console.log(data.length)
+            console.log(d3.max(data, function(d) { return +d.value; }))
 
-			d3.select("svg")
+			var xScale = d3.scaleLinear().domain([0, 125]).range([0, 400])
+			var yScale = d3.scaleLinear().domain([0, 8]).range([400, 0])
+			
+            // consistent color scheme 
+            var colorScale = d3.scaleOrdinal()
+                               .domain(["East Asia & Pacific",
+                                        "North America",
+                                        "Europe & Central Asia",
+                                        "Latin America & Caribbean",
+                                        "South Asia",
+                                        "Middle East & North Africa",
+                                        "Sub-Saharan Africa"])
+                               .range(["purple",
+                                       "indigo",
+                                       "blue",
+                                       "lightblue",
+                                       "green",
+                                       "orange",
+                                       "red"]);
+
+			d3.select("#svgForPlot")
 			  .attr("width", 400 + 2 * 100)
 			  .attr("height", 400 + 2 * 100)
 			  .append("g")
 			  .attr("transform","translate(100, 100)")
-			  .selectAll("rect")
+			  .selectAll("circle")
 			  .data(data)
 			  .enter()
-			  .append("rect")
-              .attr("x", function(d, i) { return 14 + ((400 / 7) * i) })
-              .attr("y", function(d) { return 400 - ((d.FertilityRate / 5) * 400) })
-              .attr("width", 200 / 7)
-              .attr("height", function(d) { return (d.FertilityRate / 5) * 400 });
+			  .append("circle")
+			  .attr("cx", function(d) { return xScale(d.Under5DeathsPer1000); })
+			  .attr("cy", function(d) { return yScale(d.FertilityRate); })
+			  .attr("r", 5)
+              .style("fill", function(d, i) {return colorScale(d.Region);});
 					  
-			d3.select("svg")
+			d3.select("#svgForPlot")
 			  .append("g")
 			  .attr("transform", "translate(100, 100)")
 			  .call(d3.axisLeft(yScale));
             
-			d3.select("svg")
+			d3.select("#svgForPlot")
 			  .append("g")
 			  .attr("transform", "translate(100, 500)")
 			  .call(d3.axisBottom(xScale));
+            
+            // https://stackoverflow.com/questions/11189284/d3-axis-labeling
+            d3.select("#svgForPlot")
+              .append("text")
+              .attr("class", "x label")
+              .attr("text-anchor", "end")
+              .attr("x", 420)
+              .attr("y", 535)
+              .text("Deaths Under 5 Per 1,000 Live Births");
 
+            d3.select("#svgForPlot")
+              .append("text")
+              .attr("class", "y label")
+              .attr("text-anchor", "end")
+              .attr("x", -255)
+              .attr("y", 65)
+              .attr("transform", "rotate(-90)")
+              .text("Fertility Rate");
+
+
+            // Legend
+            // https://d3-graph-gallery.com/graph/custom_legend.html (Categorical legend: square)
+            // select the svg area
+            var svgForLegend = d3.select("#svgForLegend")
+
+            // create a list of keys
+            var keys = ["East Asia & Pacific",
+                        "North America",
+                        "Europe & Central Asia",
+                        "Latin America & Caribbean",
+                        "South Asia",
+                        "Middle East & North Africa",
+                        "Sub-Saharan Africa"]
+
+            // Usually you have a color scale in your chart already
+            // var color = d3.scaleOrdinal()
+            //     .domain(keys)
+            //     .range(d3.schemeSet1);
+            // I already have a colorscale
+
+            // Add one dot in the legend for each name.
+            var size = 20
+            svgForLegend.selectAll("mydots")
+                        .data(keys)
+                        .enter()
+                        .append("rect")
+                        .attr("x", 100)
+                        .attr("y", function(d,i){ return i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+                        .attr("width", size)
+                        .attr("height", size)
+                        .style("fill", function(d){ return colorScale(d)})
+
+            // Add one dot in the legend for each name.
+            svgForLegend.selectAll("mylabels")
+                        .data(keys)
+                        .enter()
+                        .append("text")
+                        .attr("x", 100 + size*1.2)
+                        .attr("y", function(d,i){ return i*(size+5) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+                        .style("fill", function(d){ return colorScale(d)})
+                        .text(function(d){ return d})
+                        .attr("text-anchor", "left")
+                        .style("alignment-baseline", "middle")
+            // console.log(data)
 		}
 
 		/*
