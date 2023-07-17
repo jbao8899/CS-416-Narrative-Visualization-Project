@@ -1,5 +1,4 @@
 <!--https://d3-graph-gallery.com/graph/basic_datamanipulation.html very good-->
-<!--continuous colors for ordinal values?-->
 
 <html lang="en-US">
 	<head>
@@ -7,36 +6,28 @@
 		<script src='https://d3js.org/d3.v5.min.js'></script>
   	</head>
 	<body onload='init()'>
-		<!--
-		<div>
-			<h1 id="text">AAA</h1>
-		</div>
-		<div>
-			<button onclick="changeText()" style="height:25px;width:50px" />
-		</div>
-		<br />
-		-->
-		<div>
+		<div id="visualizationDiv">
 			<svg id="svgForFertilityPlot" width=600 height=600></svg>
             <svg id="svgForMortalityPlot" width=600 height=600></svg>                 
 		</div>
 		
-		<div>
+		<div id="linkDiv">
 			<a href="page3.html">Back to Scatterplot</a>
 		</div>	
 	</body>
 	<script>
-		// function init() {
-        async function init() {
-			// MY CODE: 
-			
-            var country = "Yemen, Rep."; // CHANGE!!!!
+        // initialize the various variables needed
+        var country = "Somalia"; // CHANGE!!!!
+        var data;
+        var xScale = d3.scaleLinear().domain([1960, 2021]).range([0, 400]);
+        var yScaleFertility = d3.scaleLinear().domain([0, 9]).range([400, 0])
+        var yScaleMortality = d3.scaleLinear().domain([0, 450]).range([400, 0])
 
-			// var data = d3.csv("project_2_scatterplot_data.csv");
-			var data = await d3.csv("https://raw.githubusercontent.com/jbao8899/CS-416-Narrative-Visualization-Project/main/project_2_data.csv");
+        async function init() {
+
+			// load the data
+			data = await d3.csv("https://raw.githubusercontent.com/jbao8899/CS-416-Narrative-Visualization-Project/main/project_2_data.csv");
 			
-            // get rid of data for which fertility rate is missing
-            data = data.filter(function(d) { return d.FertilityRate != "" })
             // get rid of data for which fertility rate or mortality rate under 5 are missing
             data = data.filter(function(d) { return d.FertilityRate != "" })
             data = data.filter(function(d) { return d.Under5DeathsPer1000 != "" })
@@ -62,13 +53,10 @@
                   .attr("y", 325)
                   .attr("font-size", "36px")
                   .text(country);
+                return;
             }
 
-            var xScale = d3.scaleLinear().domain([1960, 2021]).range([0, 400]);
-            var yScaleFertility = d3.scaleLinear().domain([0, 9]).range([400, 0])
-            var yScaleMortality = d3.scaleLinear().domain([0, 450]).range([400, 0])
-
-            // consistent color scheme 
+            // Create color scale 
             // var colorScale = d3.scaleOrdinal()
             //                    .domain(["East Asia & Pacific",
             //                             "North America",
@@ -108,6 +96,8 @@
                 color = "red";
             }
 
+            // Create a line chart showing how the fertility rate
+            // in the chosen country has changed over time
             // https://d3-graph-gallery.com/graph/line_basic.html
             d3.select("#svgForFertilityPlot")
 			  .attr("width", 400 + 2 * 100)
@@ -125,17 +115,18 @@
                       .y(function(d) { return yScaleFertility(d.FertilityRate) })
               )
 
+            // Add the axes for the fertility plot
             d3.select("#svgForFertilityPlot")
 			  .append("g")
 			  .attr("transform", "translate(100, 100)")
 			  .call(d3.axisLeft(yScaleFertility));
-            
 			d3.select("#svgForFertilityPlot")
 			  .append("g")
 			  .attr("transform", "translate(100, 500)")
 			  .call(d3.axisBottom(xScale)
                       .tickFormat(d3.format("d")));
 
+            // Add the axis labels and plot title for the fertility plot
             // https://stackoverflow.com/questions/11189284/d3-axis-labeling
             d3.select("#svgForFertilityPlot")
               .append("text")
@@ -145,7 +136,6 @@
               .attr("y", 535)
               .attr("font-size", "18px")
               .text("Year");
-
             d3.select("#svgForFertilityPlot")
               .append("text")
               .attr("class", "y label")
@@ -155,7 +145,6 @@
               .attr("font-size", "18px")
               .attr("transform", "rotate(-90)")
               .text("Fertility Rate");
-
             d3.select("#svgForFertilityPlot")
               .append("text")
               .attr("class", "x label")
@@ -164,6 +153,9 @@
               .attr("y", 55)
               .attr("font-size", "24px")
               .text("Fertility Rate Over Time For");
+            // We need to put country names onto a new line, as countries
+            // with long names may cause a single-line title to
+            // not fit within the SVG
             d3.select("#svgForFertilityPlot")
               .append("text")
               .attr("class", "x label")
@@ -173,6 +165,8 @@
               .attr("font-size", "24px")
               .text(country);
 
+            // Create a line chart showing how the early childhood mortality
+            // rate in the chosen country has changed over time
             // https://d3-graph-gallery.com/graph/line_basic.html
             d3.select("#svgForMortalityPlot")
 			  .attr("width", 400 + 2 * 100)
@@ -190,17 +184,18 @@
                       .y(function(d) { return yScaleMortality(d.Under5DeathsPer1000) })
               )
 
+            // Add the axes for the mortality plot
             d3.select("#svgForMortalityPlot")
 			  .append("g")
 			  .attr("transform", "translate(100, 100)")
 			  .call(d3.axisLeft(yScaleMortality));
-            
 			d3.select("#svgForMortalityPlot")
 			  .append("g")
 			  .attr("transform", "translate(100, 500)")
 			  .call(d3.axisBottom(xScale)
                       .tickFormat(d3.format("d")));
 
+            // Add the axis labels and plot title for the mortality plot
             // https://stackoverflow.com/questions/11189284/d3-axis-labeling
             d3.select("#svgForMortalityPlot")
               .append("text")
@@ -210,7 +205,6 @@
               .attr("y", 535)
               .attr("font-size", "18px")
               .text("Year");
-
             d3.select("#svgForMortalityPlot")
               .append("text")
               .attr("class", "y label")
@@ -220,7 +214,6 @@
               .attr("font-size", "18px")
               .attr("transform", "rotate(-90)")
               .text("Deaths Under 5 Per 1,000 Live Births");
-
             d3.select("#svgForMortalityPlot")
               .append("text")
               .attr("class", "x label")
@@ -229,6 +222,9 @@
               .attr("y", 55)
               .attr("font-size", "24px")
               .text("Early Childhood Mortality Rate Over Time For");
+            // We need to put country names onto a new line, as countries
+            // with long names may cause a single-line title to
+            // not fit within the SVG
             d3.select("#svgForMortalityPlot")
               .append("text")
               .attr("class", "x label")
@@ -237,18 +233,6 @@
               .attr("y", 85)
               .attr("font-size", "24px")
               .text(country);
-
-            // console.log(data)
 		}
-		/*
-		function changeText() {
-			if (document.getElementById("text").innerHTML == "AAA") {
-				document.getElementById("text").innerHTML = "BBB";
-			}
-			else {
-				document.getElementById("text").innerHTML = "AAA";
-			}
-		}
-		*/
 	</script>
 </html>
