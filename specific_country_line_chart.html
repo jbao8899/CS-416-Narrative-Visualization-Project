@@ -30,7 +30,7 @@
         async function init() {
 			// MY CODE: 
 			
-            var country = "Nigeria"; // CHANGE!!!!
+            var country = "Central African Republic"; // CHANGE!!!!
 
 			// var data = d3.csv("project_2_scatterplot_data.csv");
 			var data = await d3.csv("https://raw.githubusercontent.com/jbao8899/CS-416-Narrative-Visualization-Project/main/project_2_data.csv");
@@ -45,14 +45,23 @@
             
             // Check that we have data for the country in question
             if (data.length == 0) {
+                // for 2 lines
                 d3.select("#svgForFertilityPlot")
                   .append("text")
                   .attr("class", "error message")
                   .attr("text-anchor", "middle")
                   .attr("x", 300)
-                  .attr("y", 300)
+                  .attr("y", 275)
                   .attr("font-size", "36px")
-                  .text(`Data not found for ${country}`);
+                  .text("Data not found for");
+                d3.select("#svgForFertilityPlot")
+                  .append("text")
+                  .attr("class", "error message")
+                  .attr("text-anchor", "middle")
+                  .attr("x", 300)
+                  .attr("y", 325)
+                  .attr("font-size", "36px")
+                  .text(country);
             }
 
             var xScale = d3.scaleLinear().domain([1960, 2021]).range([0, 400]);
@@ -131,8 +140,8 @@
             d3.select("#svgForFertilityPlot")
               .append("text")
               .attr("class", "x label")
-              .attr("text-anchor", "end")
-              .attr("x", 315)
+              .attr("text-anchor", "middle")
+              .attr("x", 300)
               .attr("y", 535)
               .attr("font-size", "18px")
               .text("Year");
@@ -140,8 +149,8 @@
             d3.select("#svgForFertilityPlot")
               .append("text")
               .attr("class", "y label")
-              .attr("text-anchor", "end")
-              .attr("x", -253)
+              .attr("text-anchor", "middle")
+              .attr("x", -300)
               .attr("y", 65)
               .attr("font-size", "18px")
               .attr("transform", "rotate(-90)")
@@ -150,11 +159,19 @@
             d3.select("#svgForFertilityPlot")
               .append("text")
               .attr("class", "x label")
-              .attr("text-anchor", "end")
-              .attr("x", 600)
+              .attr("text-anchor", "middle")
+              .attr("x", 300)
+              .attr("y", 55)
+              .attr("font-size", "24px")
+              .text("Fertility Rate Over Time For");
+            d3.select("#svgForFertilityPlot")
+              .append("text")
+              .attr("class", "x label")
+              .attr("text-anchor", "middle")
+              .attr("x", 300)
               .attr("y", 85)
               .attr("font-size", "24px")
-              .text(`Fertility Rate Over Time For ${country}`);
+              .text(country);
 
             // https://d3-graph-gallery.com/graph/line_basic.html
             d3.select("#svgForMortalityPlot")
@@ -188,8 +205,8 @@
             d3.select("#svgForMortalityPlot")
               .append("text")
               .attr("class", "x label")
-              .attr("text-anchor", "end")
-              .attr("x", 315)
+              .attr("text-anchor", "middle")
+              .attr("x", 300)
               .attr("y", 535)
               .attr("font-size", "18px")
               .text("Year");
@@ -197,8 +214,8 @@
             d3.select("#svgForMortalityPlot")
               .append("text")
               .attr("class", "y label")
-              .attr("text-anchor", "end")
-              .attr("x", -165)
+              .attr("text-anchor", "middle")
+              .attr("x", -300)
               .attr("y", 65)
               .attr("font-size", "18px")
               .attr("transform", "rotate(-90)")
@@ -207,11 +224,19 @@
             d3.select("#svgForMortalityPlot")
               .append("text")
               .attr("class", "x label")
-              .attr("text-anchor", "end")
-              .attr("x", 600)
+              .attr("text-anchor", "middle")
+              .attr("x", 300)
+              .attr("y", 55)
+              .attr("font-size", "24px")
+              .text("Early Childhood Mortality Rate Over Time For");
+            d3.select("#svgForMortalityPlot")
+              .append("text")
+              .attr("class", "x label")
+              .attr("text-anchor", "middle")
+              .attr("x", 300)
               .attr("y", 85)
               .attr("font-size", "24px")
-              .text(`Early Childhood Mortality Rate Over Time For ${country}`);
+              .text(country);
 
             // console.log(data)
 		}

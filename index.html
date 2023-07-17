@@ -1,5 +1,7 @@
 <!--https://d3-graph-gallery.com/graph/basic_datamanipulation.html very good-->
 <!--continuous colors for ordinal values?-->
+<!--Need parameters???-->
+<!--Mortality range looks bad for 2020, but good for if years are allowed to change???-->
 
 <html lang="en-US">
 	<head>
@@ -126,8 +128,8 @@
             d3.select("#svgForPlot")
               .append("text")
               .attr("class", "x label")
-              .attr("text-anchor", "end")
-              .attr("x", 315)
+              .attr("text-anchor", "middle")
+              .attr("x", 300)
               .attr("y", 535)
               .attr("font-size", "18px")
               .text("Year");
@@ -135,8 +137,8 @@
             d3.select("#svgForPlot")
               .append("text")
               .attr("class", "y label")
-              .attr("text-anchor", "end")
-              .attr("x", -195)
+              .attr("text-anchor", "middle")
+              .attr("x", -300)
               .attr("y", 65)
               .attr("font-size", "18px")
               .attr("transform", "rotate(-90)")
@@ -145,8 +147,8 @@
             d3.select("#svgForPlot")
               .append("text")
               .attr("class", "x label")
-              .attr("text-anchor", "end")
-              .attr("x", 460)
+              .attr("text-anchor", "middle")
+              .attr("x", 300)
               .attr("y", 85)
               .attr("font-size", "24px")
               .text("Global Fertility Rate Over Time");
