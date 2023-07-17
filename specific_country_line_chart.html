@@ -17,7 +17,7 @@
 	</body>
 	<script>
         // initialize the various variables needed
-        var country = "Somalia"; // CHANGE!!!!
+        var country = "United States"; // CHANGE!!!!
         var data;
         var xScale = d3.scaleLinear().domain([1960, 2021]).range([0, 400]);
         var yScaleFertility = d3.scaleLinear().domain([0, 9]).range([400, 0])
@@ -65,8 +65,8 @@
             //                             "South Asia",
             //                             "Middle East & North Africa",
             //                             "Sub-Saharan Africa"])
-            //                    .range(["purple",
-            //                            "indigo",
+            //                    .range(["brown",
+            //                            "purple",
             //                            "blue",
             //                            "lightblue",
             //                            "green",
@@ -75,10 +75,10 @@
             // Above doesn't seem to work?
             var color;
             if (data[0].Region == "East Asia & Pacific") {
-                color = "purple";
+                color = "brown";
             }
             else if (data[0].Region == "North America") {
-                color = "indigo";
+                color = "purple";
             }
             else if (data[0].Region == "Europe & Central Asia") {
                 color = "blue";
