@@ -14,6 +14,13 @@
             <svg id="svgForLegend" height=375 width=300></svg>
 		</div>
 
+        <div>
+            <!--https://stackoverflow.com/a/18936328-->
+            <p style="display:inline">Year: </p>
+            <input id="yearSlider" type="range" step="1" value="2020" min="1960" max="2021" oninput="yearChanged()" />
+            <output id="yearSliderOutput">2020</output>
+        </div>
+
 		<div>
 			<a href="page2.html">Previous Slide</a>
 		</div>
@@ -21,57 +28,38 @@
 
 	<script>
 		// function init() {
+        var yearToDisplay = document.getElementById("yearSlider").value;
+        var data;
+        var xScale = d3.scaleLog().domain([1, 450]).range([0, 400])
+		var yScale = d3.scaleLinear().domain([0, 9]).range([400, 0])
+            // consistent color scheme 
+        var colorScale = d3.scaleOrdinal()
+                           .domain(["East Asia & Pacific",
+                                    "North America",
+                                    "Europe & Central Asia",
+                                    "Latin America & Caribbean",
+                                    "South Asia",
+                                    "Middle East & North Africa",
+                                    "Sub-Saharan Africa"])
+                           .range(["purple",
+                                   "indigo",
+                                   "blue",
+                                   "lightblue",
+                                   "green",
+                                    "orange",
+                                   "red"]);
+
         async function init() {
 			// MY CODE: 
-					
+			
 			// var data = d3.csv("project_2_scatterplot_data.csv");
-			var data = await d3.csv("https://raw.githubusercontent.com/jbao8899/CS-416-Narrative-Visualization-Project/main/project_2_data.csv");
+			data = await d3.csv("https://raw.githubusercontent.com/jbao8899/CS-416-Narrative-Visualization-Project/main/project_2_data.csv");
 			
             // console.log(data.length)
-
-            // making scatterplot for a certain year
-            data = data.filter(function(d) { return d.Year == "2020" })
-            // get rid of data for which fertility rate or mortality rate under 5 are missing
-            data = data.filter(function(d) { return d.FertilityRate != "" })
-            data = data.filter(function(d) { return d.Under5DeathsPer1000 != "" })
 
             // console.log(data.length)
             // console.log(d3.max(data, function(d) { return +d.value; }))
-
-			var xScale = d3.scaleLog().domain([1, 450]).range([0, 400])
-			var yScale = d3.scaleLinear().domain([0, 9]).range([400, 0])
-			
-            // consistent color scheme 
-            var colorScale = d3.scaleOrdinal()
-                               .domain(["East Asia & Pacific",
-                                        "North America",
-                                        "Europe & Central Asia",
-                                        "Latin America & Caribbean",
-                                        "South Asia",
-                                        "Middle East & North Africa",
-                                        "Sub-Saharan Africa"])
-                               .range(["purple",
-                                       "indigo",
-                                       "blue",
-                                       "lightblue",
-                                       "green",
-                                       "orange",
-                                       "red"]);
-
-			d3.select("#svgForPlot")
-			  .attr("width", 400 + 2 * 100)
-			  .attr("height", 400 + 2 * 100)
-			  .append("g")
-			  .attr("transform","translate(100, 100)")
-			  .selectAll("circle")
-			  .data(data)
-			  .enter()
-			  .append("circle")
-			  .attr("cx", function(d) { return xScale(d.Under5DeathsPer1000); })
-			  .attr("cy", function(d) { return yScale(d.FertilityRate); })
-			  .attr("r", 5)
-              .style("fill", function(d) {return colorScale(d.Region);});
-					  
+								  
 			d3.select("#svgForPlot")
 			  .append("g")
 			  .attr("transform", "translate(100, 100)")
@@ -106,12 +94,12 @@
 
             d3.select("#svgForPlot")
               .append("text")
-              .attr("class", "x label")
+              .attr("id", "plotTitle")
               .attr("text-anchor", "middle")
               .attr("x", 300)
               .attr("y", 85)
               .attr("font-size", "24px")
-              .text("Early Childhood Mortality Rate vs Fertility Rate (2020)");
+              .text(`Early Childhood Mortality Rate vs Fertility Rate (${yearToDisplay})`);
 
             // Legend
             // https://d3-graph-gallery.com/graph/custom_legend.html (Categorical legend: square)
@@ -140,10 +128,10 @@
                         .enter()
                         .append("rect")
                         .attr("x", 100)
-                        .attr("y", function(d,i){ return i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+                        .attr("y", function(d,i) { return i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
                         .attr("width", size)
                         .attr("height", size)
-                        .style("fill", function(d){ return colorScale(d)})
+                        .style("fill", function(d) { return colorScale(d)})
 
             // Add one dot in the legend for each name.
             svgForLegend.selectAll("mylabels")
@@ -151,13 +139,51 @@
                         .enter()
                         .append("text")
                         .attr("x", 100 + size*1.2)
-                        .attr("y", function(d,i){ return i*(size+5) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
-                        .style("fill", function(d){ return colorScale(d)})
-                        .text(function(d){ return d})
+                        .attr("y", function(d,i) { return i*(size+5) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+                        .style("fill", function(d) { return colorScale(d)})
+                        .text(function(d) { return d})
                         .attr("text-anchor", "left")
                         .style("alignment-baseline", "middle")
-            // console.log(data)
+
+            renderPoints(data)
 		}
+
+        function renderPoints() {
+            // making scatterplot for a certain year
+            var dataToPlot = data.filter(function(d) { return d.Year == yearToDisplay })
+            // get rid of data for which fertility rate or mortality rate under 5 are missing
+            dataToPlot = dataToPlot.filter(function(d) { return d.FertilityRate != "" })
+            dataToPlot = dataToPlot.filter(function(d) { return d.Under5DeathsPer1000 != "" })
+
+            // console.log(dataToPlot)
+
+			d3.select("#svgForPlot")
+			  .attr("width", 400 + 2 * 100)
+			  .attr("height", 400 + 2 * 100)
+			  .append("g")
+			  .attr("transform","translate(100, 100)")
+			  .selectAll("circle")
+			  .data(dataToPlot)
+			  .enter()
+			  .append("circle")
+			  .attr("cx", function(d) { return xScale(d.Under5DeathsPer1000); })
+			  .attr("cy", function(d) { return yScale(d.FertilityRate); })
+			  .attr("r", 5)
+              .style("fill", function(d) {return colorScale(d.Region);});
+        }
+
+        function yearChanged() {
+            yearToDisplay = document.getElementById("yearSlider").value;
+            document.getElementById("yearSliderOutput").value = yearToDisplay;
+
+            d3.select("#plotTitle")
+              .text(`Early Childhood Mortality Rate vs Fertility Rate (${yearToDisplay})`);
+
+            // clear the old points
+            d3.select("#svgForPlot").selectAll("circle").remove();
+
+            renderPoints();
+        }
 
 		/*
 		function changeText() {
