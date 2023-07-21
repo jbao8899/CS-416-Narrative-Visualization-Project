@@ -3,11 +3,11 @@
 		<title>CS 416 Narrative Visualization Project</title>
 		<script src='https://d3js.org/d3.v5.min.js'></script>
   	</head>
-	<body onload='init()'>
+    <body onload='init()'>
         <div id="visualizationDiv">
-			<svg id="svgForPlot" width=600 height=600></svg>
+            <svg id="svgForPlot" width=600 height=600></svg>
             <svg id="svgForLegend" height=375 width=300></svg>
-		</div>
+        </div>
 
         <div id="sliderDiv">
             <!--https://stackoverflow.com/a/18936328-->
@@ -16,15 +16,40 @@
             <output id="yearSliderOutput">2020</output>
         </div>
 
-		<div id="linkDiv">
-			<a href="index.html">Previous Slide</a>
-			<a href="page3.html">Next Slide</a>
-		</div>
-	</body>
+        <div id="linkDiv">
+            <a id="prevLink" href="index.html">Previous Slide</a>
+            <a id="nextLink" ref="page3.html">Next Slide</a>
+        </div>
+
+        <div name="tooltip" opacity=0></div>
+    </body>
 
 	<script>
-        // initialize the various variables needed
+        // We will display information about 2021 by default, but will check
+        // to see if another valid year was passed in as a parameter.
+        // if so, we will use that year instead
         var yearToDisplay = document.getElementById("yearSlider").value;
+        var urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("Year")) {
+            var parsedYear = parseInt(urlParams.get("Year"))
+            if (parsedYear != null &&
+                1960 <= parsedYear &&
+                parsedYear<= 2021) {
+                
+                // Display data for the year specified in the URL
+                yearToDisplay = parsedYear;
+
+                // Show that year in the slider
+                document.getElementById("yearSlider").value = yearToDisplay;
+                document.getElementById("yearSliderOutput").value = yearToDisplay;
+
+                // remember what year to display when moving to other pages
+                document.getElementById("prevLink").href = `index.html?Year=${yearToDisplay}`;
+                document.getElementById("nextLink").href = `page3.html?Year=${yearToDisplay}`;
+            }
+        }
+
+        // initialize the various other variables needed
         var data;
         var xScale = d3.scaleBand()
                        .domain(["East Asia & Pacific",
@@ -93,7 +118,7 @@
               .attr("x", 300)
               .attr("y", 85)
               .attr("font-size", "24px")
-              .text("Regional Fertility Rates (2020)");
+              .text(`Regional Fertility Rates (${yearToDisplay})`);
 
             // Create the legend
             // https://d3-graph-gallery.com/graph/custom_legend.html (Categorical legend: square)
@@ -241,6 +266,8 @@
                 return d3.ascending(a.OrderVar, b.OrderVar)
             })
 
+            tooltip = d3.select("#tooltip")
+
             // Plot the bars
 			d3.select("#svgForPlot")
 			  .attr("width", 400 + 2 * 100)
@@ -251,6 +278,15 @@
 			  .data(dataToPlot)
 			  .enter()
 			  .append("rect")
+              .on("mouseover",
+                  function (d, i) {
+                      tooltip.style("opacity", 1)
+                             .style("left", (d3.event.pageX) + "px")
+                             .style("top", (d3.event.pageY) + "px")
+                             .html("TOOLTIP TEXT");
+                      console.log("Got here");
+                  }
+              )
               .attr("x", function(d, i) { return 14 + ((400 / 7) * i) })
               .attr("y", function(d) { return 400 - ((d.WeightedMeanFertilityRate / 9) * 400) })
               .attr("width", 200 / 7)
@@ -264,6 +300,10 @@
 
             // Show the year for which we will plot data next to the slider
             document.getElementById("yearSliderOutput").value = yearToDisplay;
+
+            // remember what year to display when moving to other pages
+            document.getElementById("prevLink").href = `index.html?Year=${yearToDisplay}`;
+            document.getElementById("nextLink").href = `page3.html?Year=${yearToDisplay}`;
 
             // Change the plot's title to reflect the change
             // in year for which data is being plotted

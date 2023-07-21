@@ -17,13 +17,35 @@
         </div>
 
 		<div id="linkDiv">
-			<a href="page2.html">Previous Slide</a>
+			<a id="prevLink" href="page2.html">Previous Slide</a>
 		</div>
 	</body>
 
 	<script>
-        // initialize the various variables needed
+        // We will display information about 2021 by default, but will check
+        // to see if another valid year was passed in as a parameter.
+        // if so, we will use that year instead
         var yearToDisplay = document.getElementById("yearSlider").value;
+        var urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("Year")) {
+            var parsedYear = parseInt(urlParams.get("Year"))
+            if (parsedYear != null &&
+                1960 <= parsedYear &&
+                parsedYear<= 2021) {
+
+                // Display data for the year specified in the URL
+                yearToDisplay = parsedYear;
+
+                // Show that year in the slider
+                document.getElementById("yearSlider").value = yearToDisplay;
+                document.getElementById("yearSliderOutput").value = yearToDisplay;
+                
+                // remember what year to display when moving to other pages
+                document.getElementById("prevLink").href = `page2.html?Year=${yearToDisplay}`;
+            }
+        }
+
+        // initialize the various variables needed
         var data;
         var xScale = d3.scaleLog().domain([1, 450]).range([0, 400])
 		var yScale = d3.scaleLinear().domain([0, 9]).range([400, 0])
@@ -168,6 +190,9 @@
 
             // Show the year for which we will plot data next to the slider
             document.getElementById("yearSliderOutput").value = yearToDisplay;
+
+            // remember what year to display when moving to other pages
+            document.getElementById("prevLink").href = `page2.html?Year=${yearToDisplay}`;
 
             // Change the plot's title to reflect the change
             // in year for which data is being plotted

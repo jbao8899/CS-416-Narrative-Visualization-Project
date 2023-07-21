@@ -12,10 +12,29 @@
 		</div>
 		
 		<div id="linkDiv">
-			<a href="page3.html">Back to Scatterplot</a>
+			<a id="prevLink" href="page3.html">Back to Scatterplot</a>
 		</div>	
 	</body>
 	<script>
+        // Although information for all years is shown here, we want to
+        // remember what year was being displayed if we come here from
+        // slide 3 and then go back
+        var yearToDisplay = 2020;
+        var urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("Year")) {
+            var parsedYear = parseInt(urlParams.get("Year"))
+            if (parsedYear != null &&
+                1960 <= parsedYear &&
+                parsedYear<= 2021) {
+                
+                // Display data for the year specified in the URL
+                yearToDisplay = parsedYear;
+
+                // remember what year to display when moving to other pages
+                document.getElementById("prevLink").href = `page3.html?Year=${yearToDisplay}`;
+            }
+        }
+
         // initialize the various variables needed
         var country = "United States"; // CHANGE!!!!
         var data;

@@ -1,6 +1,9 @@
 <!--https://d3-graph-gallery.com/graph/basic_datamanipulation.html very good-->
 <!--continuous colors for ordinal values?-->
 <!--Need parameters???-->
+<!--What annotations? Like remark that East Asia has high fertility at first, then low?
+    And that you see their fertility and mortality decreasing as time passes in scatterplot? 
+    Does it have to be pointing at graph? Can I just write stuff at the bottom?-->
 <!--Mortality range looks bad for 2020, but good for if years are allowed to change???-->
 <!-- Execution order? Will whole script block run before the onload() for body???? -->
 
@@ -9,20 +12,42 @@
 		<title>CS 416 Narrative Visualization Project</title>
 		<script src='https://d3js.org/d3.v5.min.js'></script>
   	</head>
-	<body onload='init()'>
-		<div id="visualizationDiv">
-			<svg id="svgForPlot" width=600 height=600></svg>            
-		</div>
-		
-		<div id="sliderDiv">
-			<a href="page2.html">Next Slide</a>
-		</div>	
-	</body>
+    <body onload='init()'>
+        <div id="visualizationDiv">
+            <svg id="svgForPlot" width=600 height=600></svg>
+        </div>
+
+        <div id="linkDiv">
+            <a id="nextLink" href="page2.html">Next Slide</a>
+        </div>
+
+        <div name="tooltip" opacity=0></div>
+    </body>
 	<script>
+        // Although information for all years is shown here, we want to
+        // remember what year was being displayed if we come here from
+        // one of the upcoming slides
+        var yearToDisplay = 2020;
+        var urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("Year")) {
+            var parsedYear = parseInt(urlParams.get("Year"))
+            if (parsedYear != null &&
+                1960 <= parsedYear &&
+                parsedYear<= 2021) {
+                
+                // Display data for the year specified in the URL
+                yearToDisplay = parsedYear;
+
+                // remember what year to display when moving to other pages
+                document.getElementById("nextLink").href = `page2.html?Year=${yearToDisplay}`;
+            }
+        }
+
         // initialize the various variables needed
         var data;
         var xScale = d3.scaleLinear().domain([1960, 2021]).range([0, 400]);
         var yScale = d3.scaleLinear().domain([0, 9]).range([400, 0])
+        tooltip = d3.select("#tooltip")
 
         async function init() {
             // load the data
@@ -81,7 +106,7 @@
                               return { Year: d.key, WeightedMeanFertilityRate: d.value};
                           }
                       );
-            
+
             // Plot a line showing the global weighted mean fertility rate
             // for each year
             // https://d3-graph-gallery.com/graph/line_basic.html
@@ -91,6 +116,14 @@
 			  .append("g")
 			  .attr("transform","translate(100, 100)")
               .append("path")
+              //.on("mouseover",
+              //    function (d, i) {
+              //        console.log("Got here");
+              //        tooltip.style("opacity", 1)
+              //               .style("left", (d3.event.pageX) + "px")
+              //               .style("top", (d3.event.pageY) + "px")
+              //               .html("TOOLTIP TEXT");
+              //    })
               .datum(data)
               .attr("fill", "none")
               .attr("stroke", "black")
