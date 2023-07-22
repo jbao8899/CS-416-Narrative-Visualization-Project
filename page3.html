@@ -103,12 +103,22 @@
               .text("Fertility Rate");
             d3.select("#svgForPlot")
               .append("text")
-              .attr("id", "plotTitle")
+              .attr("id", "plotTitleLine1")
+              .attr("text-anchor", "middle")
+              .attr("x", 300)
+              .attr("y", 55)
+              .attr("font-size", "30px")
+              .text("Early Childhood Mortality Rate");
+            d3.select("#svgForPlot")
+              .append("text")
+              .attr("id", "plotTitleLine2")
               .attr("text-anchor", "middle")
               .attr("x", 300)
               .attr("y", 85)
               .attr("font-size", "30px")
-              .text(`Early Childhood Mortality Rate vs Fertility Rate (${yearToDisplay})`);
+              .text(`vs Fertility Rate (${yearToDisplay})`);
+
+
 
             // Code to create the color legend
             // https://d3-graph-gallery.com/graph/custom_legend.html (Categorical legend: square)
@@ -196,8 +206,8 @@
 
             // Change the plot's title to reflect the change
             // in year for which data is being plotted
-            d3.select("#plotTitle")
-              .text(`Early Childhood Mortality Rate vs Fertility Rate (${yearToDisplay})`);
+            d3.select("#plotTitleLine2")
+              .text(`vs Fertility Rate (${yearToDisplay})`);
             
             // render the points for the next year
             renderPoints();
