@@ -4,9 +4,10 @@
 <!--What annotations? Like remark that East Asia has high fertility at first, then low?
     And that you see their fertility and mortality decreasing as time passes in scatterplot? 
     Does it have to be pointing at graph? Can I just write stuff at the bottom?-->
+<!--d3.event.pageX gives coordinates on page as a whole? What to do on page with 2 graphs?-->
 <!--Mortality range looks bad for 2020, but good for if years are allowed to change???-->
 <!-- Execution order? Will whole script block run before the onload() for body???? -->
-<!-- Is d3.event.pageX position within SVG or page? -->
+<!-- Eliminate gaps between lines? Margin and padding don't seem to do anything when set to 0px -->
 
 <html lang="en-US">
 	<head>
@@ -18,11 +19,16 @@
             <svg id="svgForPlot" width=600 height=600></svg>
         </div>
 
-        <div id="linkDiv">
-            <a id="nextLink" href="page2.html">Next Slide</a>
+        <div id="tooltipDescriptorDiv">
+            <p id="tooltipDescriptorLine1" style="font-size:150%;">Mouse over the chart to see exact values</p>
+            <p id="tooltipDescriptorLine2" style="font-size:150%;"> ------------------------------------------------- </p>
         </div>
 
-        <div id="tooltip" style="opacity:0;position:absolute"></div>
+        <div id="linkDiv">
+            <a id="nextLink" style="font-size:24px;" href="page2.html">Next Slide</a>
+        </div>
+
+        <!-- <div id="tooltip" style="opacity:0;position:absolute"></div> -->
     </body>
 	<script>
         // Although information for all years is shown here, we want to
@@ -183,7 +189,7 @@
               .attr("text-anchor", "middle")
               .attr("x", 300)
               .attr("y", 85)
-              .attr("font-size", "24px")
+              .attr("font-size", "30px")
               .text("Global Fertility Rate Over Time");
             
             d3.select("#svgForPlot")
@@ -214,6 +220,11 @@
                             .style("stroke-dasharray", "5,5")
                             .attr("id", "tooltipLine");
 
+                          var roundedYear = Math.round(inverseXScale(d3.event.pageX - 100));
+                          document.getElementById("tooltipDescriptorLine1")
+                                  .innerHTML = `In ${roundedYear}, the global weighted mean fertility rate`;
+                          document.getElementById("tooltipDescriptorLine2")
+                                  .innerHTML = `was ${Math.round(fertilityDict[roundedYear] * 100) / 100} children per woman.`;
                           //   var xInsidePlot = d3.event.pageX - 100;
                           //   var yearHoveringOver = parseInt(inverseXScale(xInsidePlot));
                           //   console.log(fertilityDict[yearHoveringOver]);
@@ -224,6 +235,10 @@
                   function() {
                       d3.select("#tooltipLine")
                           .remove();
+                      document.getElementById("tooltipDescriptorLine1")
+                          .innerHTML = "Mouse over the chart to see exact values";
+                      document.getElementById("tooltipDescriptorLine2")
+                          .innerHTML = "-------------------------------------------------";
                   }
               )
 		}

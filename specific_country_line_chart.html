@@ -7,12 +7,12 @@
   	</head>
 	<body onload='init()'>
 		<div id="visualizationDiv">
-			<svg id="svgForFertilityPlot" width=600 height=600></svg>
-            <svg id="svgForMortalityPlot" width=600 height=600></svg>                 
+			<svg id="svgForFertilityPlot" width=600 height=600 style="margin:0px;padding:0px;"></svg>
+            <svg id="svgForMortalityPlot" width=600 height=600 style="margin:0px;padding:0px;"></svg>                 
 		</div>
 		
 		<div id="linkDiv">
-			<a id="prevLink" href="page3.html">Back to Scatterplot</a>
+			<a id="prevLink" style="font-size:24px;" href="page3.html">Back to Scatterplot</a>
 		</div>	
 	</body>
 	<script>
@@ -36,7 +36,7 @@
         }
 
         // initialize the various variables needed
-        var country = "United States"; // CHANGE!!!!
+        var country = "Congo, Dem. Rep."; // CHANGE!!!!
         var data;
         var xScale = d3.scaleLinear().domain([1960, 2021]).range([0, 400]);
         var yScaleFertility = d3.scaleLinear().domain([0, 9]).range([400, 0])
@@ -170,7 +170,7 @@
               .attr("text-anchor", "middle")
               .attr("x", 300)
               .attr("y", 55)
-              .attr("font-size", "24px")
+              .attr("font-size", "30px")
               .text("Fertility Rate Over Time For");
             // We need to put country names onto a new line, as countries
             // with long names may cause a single-line title to
@@ -181,7 +181,7 @@
               .attr("text-anchor", "middle")
               .attr("x", 300)
               .attr("y", 85)
-              .attr("font-size", "24px")
+              .attr("font-size", "30px")
               .text(country);
 
             // Create a line chart showing how the early childhood mortality
@@ -239,7 +239,7 @@
               .attr("text-anchor", "middle")
               .attr("x", 300)
               .attr("y", 55)
-              .attr("font-size", "24px")
+              .attr("font-size", "30px")
               .text("Early Childhood Mortality Rate Over Time For");
             // We need to put country names onto a new line, as countries
             // with long names may cause a single-line title to
@@ -250,8 +250,16 @@
               .attr("text-anchor", "middle")
               .attr("x", 300)
               .attr("y", 85)
-              .attr("font-size", "24px")
+              .attr("font-size", "30px")
               .text(country);
+
+              d3.select("#svgForMortalityPlot")
+              .on("mouseover mousemove",
+                  function() {
+                      console.log(d3.event.pageX);
+                    //   console.log(d3.event.pageY);
+                  }
+              )
 		}
 	</script>
 </html>
