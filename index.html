@@ -6,6 +6,7 @@
     Does it have to be pointing at graph? Can I just write stuff at the bottom?-->
 <!--Mortality range looks bad for 2020, but good for if years are allowed to change???-->
 <!-- Execution order? Will whole script block run before the onload() for body???? -->
+<!-- Is d3.event.pageX position within SVG or page? -->
 
 <html lang="en-US">
 	<head>
@@ -21,7 +22,7 @@
             <a id="nextLink" href="page2.html">Next Slide</a>
         </div>
 
-        <div id="tooltip" style="opacity:0"></div>
+        <!-- <div id="tooltip" style="opacity:0"></div> -->
     </body>
 	<script>
         // Although information for all years is shown here, we want to
@@ -46,8 +47,13 @@
         // initialize the various variables needed
         var data;
         var xScale = d3.scaleLinear().domain([1960, 2021]).range([0, 400]);
+        var inverseXScale = d3.scaleLinear().domain([0, 400]).range([1960, 2021]);
         var yScale = d3.scaleLinear().domain([0, 9]).range([400, 0])
-        tooltip = d3.select("#tooltip")
+        // tooltip = d3.select("#tooltip")
+
+        // Make an object mapping from years to weighted mean fertility rate
+        // values will be set in init()
+        var fertilityDict = { };
 
         async function init() {
             // load the data
@@ -106,6 +112,13 @@
                               return { Year: d.key, WeightedMeanFertilityRate: d.value};
                           }
                       );
+            
+
+            // put the data in a dictionary mapping from years to
+            // weighted mean fertility rates
+            for (var i = 0; i < data.length; i++) {
+                fertilityDict[data[i].Year] = data[i].WeightedMeanFertilityRate;
+            }
 
             // Plot a line showing the global weighted mean fertility rate
             // for each year
@@ -116,15 +129,15 @@
 			  .append("g")
 			  .attr("transform","translate(100, 100)")
               .append("path")
-              .on("mouseover",
-                  function (d, i) {
-                      console.log("Got here");
-                      tooltip.style("opacity", 1)
-                             .style("left", (d3.event.pageX) + "px")
-                             .style("top", (d3.event.pageY) + "px")
-                             .style("position", "absolute")
-                             .html("TOOLTIP TEXT");
-                  })
+            //   .on("mouseover",
+            //       function (d, i) {
+            //           console.log("Got here");
+            //           tooltip.style("opacity", 1)
+            //                  .style("left", (d3.event.pageX) + "px")
+            //                  .style("top", (d3.event.pageY) + "px")
+            //                  .style("position", "absolute")
+            //                  .html("TOOLTIP TEXT");
+            //       })
               .datum(data)
               .attr("fill", "none")
               .attr("stroke", "black")
@@ -134,7 +147,7 @@
                       .x(function(d) { return xScale(d.Year) })
                       .y(function(d) { return yScale(d.WeightedMeanFertilityRate) })
               )
-
+            
             // Plot the axes
             d3.select("#svgForPlot")
 			  .append("g")
@@ -173,6 +186,34 @@
               .attr("y", 85)
               .attr("font-size", "24px")
               .text("Global Fertility Rate Over Time");
+            
+            d3.select("#svgForPlot")
+              .on("mouseover",
+                  function() {
+                      console.log(d3.event.pageX);
+                      if (100 <= d3.event.pageX &&
+                          d3.event.pageX <= 500 &&
+                          100 <= d3.event.pageY &&
+                          d3.event.pageX <= 500) {
+
+                          //   console.log("Mousing over plot");
+                          //   console.log(d3.event.pageX);
+                          //   console.log(d3.event.pageY);
+                          
+                          d3.select("#svgForPlot")
+                            .append("path")
+                            .attr("d", "M" + 
+                                       d3.event.pageX +
+                                       " 100 L" +
+                                       d3.event.pageX +
+                                       " 500");
+
+                          //   var xInsidePlot = d3.event.pageX - 100;
+                          //   var yearHoveringOver = parseInt(inverseXScale(xInsidePlot));
+                          //   console.log(fertilityDict[yearHoveringOver]);
+                      }                    
+                  }
+              )
 		}
 	</script>
 </html>
