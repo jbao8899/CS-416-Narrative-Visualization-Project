@@ -22,7 +22,7 @@
             <a id="nextLink" href="page2.html">Next Slide</a>
         </div>
 
-        <!-- <div id="tooltip" style="opacity:0"></div> -->
+        <div id="tooltip" style="opacity:0;position:absolute"></div>
     </body>
 	<script>
         // Although information for all years is shown here, we want to
@@ -49,7 +49,7 @@
         var xScale = d3.scaleLinear().domain([1960, 2021]).range([0, 400]);
         var inverseXScale = d3.scaleLinear().domain([0, 400]).range([1960, 2021]);
         var yScale = d3.scaleLinear().domain([0, 9]).range([400, 0])
-        // tooltip = d3.select("#tooltip")
+        tooltip = d3.select("#tooltip")
 
         // Make an object mapping from years to weighted mean fertility rate
         // values will be set in init()
@@ -135,7 +135,6 @@
             //           tooltip.style("opacity", 1)
             //                  .style("left", (d3.event.pageX) + "px")
             //                  .style("top", (d3.event.pageY) + "px")
-            //                  .style("position", "absolute")
             //                  .html("TOOLTIP TEXT");
             //       })
               .datum(data)
@@ -188,30 +187,43 @@
               .text("Global Fertility Rate Over Time");
             
             d3.select("#svgForPlot")
-              .on("mouseover",
+              .on("mouseover mousemove",
                   function() {
-                      console.log(d3.event.pageX);
                       if (100 <= d3.event.pageX &&
                           d3.event.pageX <= 500 &&
                           100 <= d3.event.pageY &&
-                          d3.event.pageX <= 500) {
+                          d3.event.pageY <= 500) {
 
                           //   console.log("Mousing over plot");
                           //   console.log(d3.event.pageX);
                           //   console.log(d3.event.pageY);
                           
+                          d3.select("#tooltipLine")
+                            .remove();
+                          
+                          // https://stackoverflow.com/a/26419079/
                           d3.select("#svgForPlot")
-                            .append("path")
-                            .attr("d", "M" + 
-                                       d3.event.pageX +
-                                       " 100 L" +
-                                       d3.event.pageX +
-                                       " 500");
+                            .append("line")
+                            .attr("x1", d3.event.pageX)
+                            .attr("x2", d3.event.pageX)
+                            .attr("y1", 100)
+                            .attr("y2", 500)
+                            .style("stroke", "black")
+                            .style("stroke-width", 1)
+                            .style("fill", "none")
+                            .style("stroke-dasharray", "5,5")
+                            .attr("id", "tooltipLine");
 
                           //   var xInsidePlot = d3.event.pageX - 100;
                           //   var yearHoveringOver = parseInt(inverseXScale(xInsidePlot));
                           //   console.log(fertilityDict[yearHoveringOver]);
                       }                    
+                  }
+              )
+              .on("mouseout",
+                  function() {
+                      d3.select("#tooltipLine")
+                          .remove();
                   }
               )
 		}
