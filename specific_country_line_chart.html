@@ -12,6 +12,8 @@
 		</div>
 		
 		<div id="textDiv" style="width:900px;">
+            <p id="tooltipDescriptor" style="font-size:150%;">Mouse over a chart to see exact values</p>
+
             <p id="text" style="font-size:24px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
 			<a id="prevLink" style="font-size:30px;" href="page3.html">Back to Scatterplot</a>
@@ -23,6 +25,7 @@
         // slide 3 and then go back
         var yearToDisplay = 2020;
         var urlParams = new URLSearchParams(window.location.search);
+
         if (urlParams.has("Year")) {
             var parsedYear = parseInt(urlParams.get("Year"))
             if (parsedYear != null &&
@@ -41,8 +44,16 @@
         var country = "Congo, Dem. Rep."; // CHANGE!!!!
         var data;
         var xScale = d3.scaleLinear().domain([1960, 2021]).range([0, 400]);
+        var inverseXScale = d3.scaleLinear().domain([0, 400]).range([1960, 2021]);
         var yScaleFertility = d3.scaleLinear().domain([0, 9]).range([400, 0])
         var yScaleMortality = d3.scaleLinear().domain([0, 450]).range([400, 0])
+
+        // Make an object mapping from years to fertility rate
+        // values will be set in init()
+        var fertilityDict = { };
+        // Make an object mapping from years to mortality rate
+        // values will be set in init()
+        var mortalityDict = { };
 
         async function init() {
 
@@ -115,6 +126,13 @@
             }
             else { // Sub-Saharan Africa
                 color = "red";
+            }
+
+            // put the data in dictionaries mapping from years to
+            // fertility and mortality rates
+            for (var i = 0; i < data.length; i++) {
+                fertilityDict[data[i].Year] = data[i].FertilityRate;
+                mortalityDict[data[i].Year] = data[i].Under5DeathsPer1000;
             }
 
             // Create a line chart showing how the fertility rate
@@ -243,6 +261,7 @@
               .attr("y", 55)
               .attr("font-size", "30px")
               .text("Early Childhood Mortality Rate Over Time For");
+
             // We need to put country names onto a new line, as countries
             // with long names may cause a single-line title to
             // not fit within the SVG
@@ -255,13 +274,127 @@
               .attr("font-size", "30px")
               .text(country);
 
-              d3.select("#svgForMortalityPlot")
+            d3.select("#svgForFertilityPlot")
               .on("mouseover mousemove",
                   function() {
-                      console.log(d3.event.pageX);
-                    //   console.log(d3.event.pageY);
+                      var mouseCoords = d3.mouse(this);
+                      if (100 <= mouseCoords[0] &&
+                          mouseCoords[0] <= 500 &&
+                          100 <= mouseCoords[1] &&
+                          mouseCoords[1] <= 500) {
+                          
+                          d3.select("#tooltipLine")
+                            .remove();
+                          
+                          // https://stackoverflow.com/a/26419079/
+                          d3.select("#svgForFertilityPlot")
+                            .append("line")
+                            .attr("x1", mouseCoords[0])
+                            .attr("x2", mouseCoords[0])
+                            .attr("y1", 100)
+                            .attr("y2", 500)
+                            .style("stroke", "black")
+                            .style("stroke-width", 1)
+                            .style("fill", "none")
+                            .style("stroke-dasharray", "5,5")
+                            .attr("id", "tooltipLine");
+
+                          var roundedYear = Math.round(inverseXScale(mouseCoords[0] - 100));
+
+                          var fertilityToPrint = Math.round(fertilityDict[roundedYear] * 100) / 100;
+                          if (!isNaN(fertilityToPrint)) {
+                              document.getElementById("tooltipDescriptor")
+                                      .innerHTML = `In ${roundedYear}, the fertility rate in ${country} was ${fertilityToPrint} children per woman.`;
+                          }
+                          else {
+                              document.getElementById("tooltipDescriptor")
+                                      .innerHTML = `In ${roundedYear}, the fertility rate in ${country} was unknown.`;
+                          }
+
+                      }                    
                   }
               )
+            // d3.mouse(this) seems to think I leave the graph often,
+            // even when I don't,
+            // so I comment this out to prevent my annotation and vertical line
+            // from flashing on and off repeatedly
+            //   .on("mouseout",
+            //       function() {
+            //           d3.select("#tooltipLine")
+            //               .remove();
+            //           document.getElementById("tooltipDescriptor")
+            //               .innerHTML = "Mouse over the chart to see exact values";
+            //       }
+            //   );
+
+            d3.select("#svgForMortalityPlot")
+              .on("mouseover mousemove",
+                  function() {
+                      var mouseCoords = d3.mouse(this);
+                      if (100 <= mouseCoords[0] &&
+                          mouseCoords[0] <= 500 &&
+                          100 <= mouseCoords[1] &&
+                          mouseCoords[1] <= 500) {
+                          
+                          d3.select("#tooltipLine")
+                            .remove();
+                          
+                          // https://stackoverflow.com/a/26419079/
+                          d3.select("#svgForMortalityPlot")
+                            .append("line")
+                            .attr("x1", mouseCoords[0])
+                            .attr("x2", mouseCoords[0])
+                            .attr("y1", 100)
+                            .attr("y2", 500)
+                            .style("stroke", "black")
+                            .style("stroke-width", 1)
+                            .style("fill", "none")
+                            .style("stroke-dasharray", "5,5")
+                            .attr("id", "tooltipLine");
+
+                          var roundedYear = Math.round(inverseXScale(mouseCoords[0] - 100));
+                          
+                          var mortalityToPrint = Math.round(mortalityDict[roundedYear] * 100) / 100;
+                          
+                          if (!isNaN(mortalityToPrint)) {
+                              document.getElementById("tooltipDescriptor")
+                                      .innerHTML = `In ${roundedYear}, ${mortalityToPrint} children under the age of 5 died for every 1,000 live births in ${country}.`;
+                          }
+                          else {
+                              document.getElementById("tooltipDescriptor")
+                                      .innerHTML = `In ${roundedYear}, the mortality rate of children under the age of 5 was unknown in ${country}.`;
+                          }
+                      }                    
+                  }
+              )
+            // d3.mouse(this) seems to think I leave the graph often,
+            // even when I don't,
+            // so I comment this out to prevent my annotation and vertical line
+            // from flashing on and off repeatedly
+            //   .on("mouseout",
+            //       function() {
+            //           d3.select("#tooltipLine")
+            //               .remove();
+            //           document.getElementById("tooltipDescriptor")
+            //               .innerHTML = "Mouse over the chart to see exact values";
+            //       }
+            //   );
+
+            //   d3.select("#svgForFertilityPlot")
+            //   .on("mouseover mousemove",
+            //       function() {
+            //           document.getElementById("tooltipDescriptor")
+            //                   .innerHTML = d3.mouse(this)[0]; //event.pageX;
+            //       }
+            //   )
+
+            //   d3.select("#svgForMortalityPlot")
+            //   .on("mouseover mousemove",
+            //       function() {
+            //           document.getElementById("tooltipDescriptor")
+            //                   .innerHTML = d3.mouse(this)[0]; //event.pageX;
+            //       }
+            //   )
 		}
 	</script>
 </html>
