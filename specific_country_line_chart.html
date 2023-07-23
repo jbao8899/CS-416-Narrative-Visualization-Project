@@ -11,8 +11,10 @@
             <svg id="svgForMortalityPlot" width=600 height=600 style="margin:0px;padding:0px;"></svg>                 
 		</div>
 		
-		<div id="linkDiv">
-			<a id="prevLink" style="font-size:24px;" href="page3.html">Back to Scatterplot</a>
+		<div id="textDiv" style="width:900px;">
+            <p id="text" style="font-size:24px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+			<a id="prevLink" style="font-size:30px;" href="page3.html">Back to Scatterplot</a>
 		</div>	
 	</body>
 	<script>
@@ -152,8 +154,8 @@
               .attr("class", "x label")
               .attr("text-anchor", "middle")
               .attr("x", 300)
-              .attr("y", 535)
-              .attr("font-size", "18px")
+              .attr("y", 545)
+              .attr("font-size", "24px")
               .text("Year");
             d3.select("#svgForFertilityPlot")
               .append("text")
@@ -161,7 +163,7 @@
               .attr("text-anchor", "middle")
               .attr("x", -300)
               .attr("y", 65)
-              .attr("font-size", "18px")
+              .attr("font-size", "24px")
               .attr("transform", "rotate(-90)")
               .text("Fertility Rate");
             d3.select("#svgForFertilityPlot")
@@ -221,8 +223,8 @@
               .attr("class", "x label")
               .attr("text-anchor", "middle")
               .attr("x", 300)
-              .attr("y", 535)
-              .attr("font-size", "18px")
+              .attr("y", 545)
+              .attr("font-size", "24px")
               .text("Year");
             d3.select("#svgForMortalityPlot")
               .append("text")
@@ -230,7 +232,7 @@
               .attr("text-anchor", "middle")
               .attr("x", -300)
               .attr("y", 65)
-              .attr("font-size", "18px")
+              .attr("font-size", "24px")
               .attr("transform", "rotate(-90)")
               .text("Deaths Under 5 Per 1,000 Live Births");
             d3.select("#svgForMortalityPlot")

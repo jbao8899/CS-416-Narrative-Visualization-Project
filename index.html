@@ -19,17 +19,19 @@
             <svg id="svgForPlot" width=600 height=600></svg>
         </div>
 
-        <div id="tooltipDescriptorDiv">
-            <p id="tooltipDescriptorLine1" style="font-size:150%;">Mouse over the chart to see exact values</p>
-            <p id="tooltipDescriptorLine2" style="font-size:150%;"> ------------------------------------------------- </p>
-        </div>
+        <div id="textDiv" style="width:900px;">
+            <p id="tooltipDescriptor" style="font-size:150%;">Mouse over the chart to see exact values</p>
 
-        <div id="textDiv">
-            <p id="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <!-- <br /> -->
+
+            <p id="text" style="font-size:24px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+            <!-- <br /> -->
+
+            <a id="nextLink" style="font-size:30px;float:right;" href="page2.html">Next Slide</a>
         </div>
 
         <div id="linkDiv">
-            <a id="nextLink" style="font-size:24px;float:right;" href="page2.html">Next Slide</a>
         </div>
 
         <!-- <div id="tooltip" style="opacity:0;position:absolute"></div> -->
@@ -139,14 +141,6 @@
 			  .append("g")
 			  .attr("transform","translate(100, 100)")
               .append("path")
-            //   .on("mouseover",
-            //       function (d, i) {
-            //           console.log("Got here");
-            //           tooltip.style("opacity", 1)
-            //                  .style("left", (d3.event.pageX) + "px")
-            //                  .style("top", (d3.event.pageY) + "px")
-            //                  .html("TOOLTIP TEXT");
-            //       })
               .datum(data)
               .attr("fill", "none")
               .attr("stroke", "black")
@@ -175,8 +169,8 @@
               .attr("class", "x label")
               .attr("text-anchor", "middle")
               .attr("x", 300)
-              .attr("y", 535)
-              .attr("font-size", "18px")
+              .attr("y", 545)
+              .attr("font-size", "24px")
               .text("Year");
             d3.select("#svgForPlot")
               .append("text")
@@ -184,7 +178,7 @@
               .attr("text-anchor", "middle")
               .attr("x", -300)
               .attr("y", 65)
-              .attr("font-size", "18px")
+              .attr("font-size", "24px")
               .attr("transform", "rotate(-90)")
               .text("Weighted Mean Fertility Rate");
             d3.select("#svgForPlot")
@@ -225,10 +219,8 @@
                             .attr("id", "tooltipLine");
 
                           var roundedYear = Math.round(inverseXScale(d3.event.pageX - 100));
-                          document.getElementById("tooltipDescriptorLine1")
-                                  .innerHTML = `In ${roundedYear}, the global weighted mean fertility rate`;
-                          document.getElementById("tooltipDescriptorLine2")
-                                  .innerHTML = `was ${Math.round(fertilityDict[roundedYear] * 100) / 100} children per woman.`;
+                          document.getElementById("tooltipDescriptor")
+                                  .innerHTML = `In ${roundedYear}, the global weighted mean fertility rate was ${Math.round(fertilityDict[roundedYear] * 100) / 100} children per woman.`;
                           //   var xInsidePlot = d3.event.pageX - 100;
                           //   var yearHoveringOver = parseInt(inverseXScale(xInsidePlot));
                           //   console.log(fertilityDict[yearHoveringOver]);
@@ -239,12 +231,10 @@
                   function() {
                       d3.select("#tooltipLine")
                           .remove();
-                      document.getElementById("tooltipDescriptorLine1")
+                      document.getElementById("tooltipDescriptor")
                           .innerHTML = "Mouse over the chart to see exact values";
-                      document.getElementById("tooltipDescriptorLine2")
-                          .innerHTML = "-------------------------------------------------";
                   }
-              )
+              );
 		}
 	</script>
 </html>
