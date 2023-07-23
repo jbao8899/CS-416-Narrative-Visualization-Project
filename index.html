@@ -9,6 +9,8 @@
 <!--Mortality range looks bad for 2020, but good for if years are allowed to change???-->
 <!-- Execution order? Will whole script block run before the onload() for body???? -->
 <!-- Eliminate gaps between lines? Margin and padding don't seem to do anything when set to 0px -->
+<!-- Go to "LOOK HERE!!!!" on page 3. Why can't I select a single point and set its opacity?
+    I can change it for all points, or all points that fulfill some condition, but not a single point. -->
 
 <html lang="en-US">
 	<head>
@@ -21,7 +23,7 @@
         </div>
 
         <div id="textDiv" style="width:900px;">
-            <p id="tooltipDescriptor" style="font-size:150%;">Mouse over the chart to see exact values</p>
+            <p id="tooltipDescriptor" style="font-size:150%;">Mouse over the chart to see exact data values</p>
 
             <!-- <br /> -->
 
@@ -44,7 +46,7 @@
         var yearToDisplay = 2020;
         var urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has("Year")) {
-            var parsedYear = parseInt(urlParams.get("Year"))
+            var parsedYear = parseInt(urlParams.get("Year"));
             if (parsedYear != null &&
                 1960 <= parsedYear &&
                 parsedYear<= 2021) {
@@ -233,7 +235,7 @@
                       d3.select("#tooltipLine")
                           .remove();
                       document.getElementById("tooltipDescriptor")
-                          .innerHTML = "Mouse over the chart to see exact values";
+                          .innerHTML = "Mouse over the chart to see exact data values";
                   }
               );
 		}
