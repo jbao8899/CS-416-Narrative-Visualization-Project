@@ -209,10 +209,31 @@
                         })
                         .attr("fill-opacity", "0.2");
                     
-                    // LOOK HERE!!!!
-                    //   console.log(d3.select("#" + this.id));
-                    //   d3.selectAll(`circle{id=${this.id}}`)
-                    //     .attr("fill", "black");
+                      var xCoordForLine = this.cx["baseVal"]["value"] + 100;
+                      var yCoordForLine = this.cy["baseVal"]["value"] + 100;
+                      // https://stackoverflow.com/a/26419079/
+                      d3.select("#svgForPlot")
+                        .append("line")
+                        .attr("x1", xCoordForLine)
+                        .attr("x2", xCoordForLine)
+                        .attr("y1", 500)
+                        .attr("y2", yCoordForLine)
+                        .style("stroke", "black")
+                        .style("stroke-width", 1)
+                        .style("fill", "none")
+                        .style("stroke-dasharray", "5,5")
+                        .attr("id", "tooltipVerticalLine");
+                      d3.select("#svgForPlot")
+                        .append("line")
+                        .attr("x1", 100)
+                        .attr("x2", xCoordForLine)
+                        .attr("y1", yCoordForLine)
+                        .attr("y2", yCoordForLine)
+                        .style("stroke", "black")
+                        .style("stroke-width", 1)
+                        .style("fill", "none")
+                        .style("stroke-dasharray", "5,5")
+                        .attr("id", "tooltipHorizontalLine");
                   }                    
               )
               .on("mouseout",
@@ -221,6 +242,11 @@
                           .innerHTML = "Mouse over a point to see exact data values. Click on a point to see more information about the country it represents.";
                       d3.selectAll("circle")
                         .attr("fill-opacity", "1");
+
+                      d3.select("#tooltipVerticalLine")
+                        .remove();
+                      d3.select("#tooltipHorizontalLine")
+                        .remove();
                   }
               )
               .on("click",
