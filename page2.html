@@ -6,7 +6,7 @@
     <body onload='init()'>
         <div id="visualizationDiv">
             <svg id="svgForPlot" width=600 height=600></svg>
-            <svg id="svgForLegend" height=375 width=300></svg>
+            <svg id="svgForLegend" height=375 width=350></svg>
         </div>
 
         <div id="sliderDiv">
@@ -19,7 +19,34 @@
         <div id="textDiv" style="width:900px;">
             <p id="tooltipDescriptor" style="font-size:150%;">Mouse over the bars to see exact data values</p>
 
-            <p id="text" style="font-size:24px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p style="font-size:24px;">
+                On this page, we display the weighted mean fertility rate for each
+                region of the world, for a given year. Drag the slider to change
+                which year the bar chart of weighted mean fertility rates should
+                display information about. Fertility rate and weighted mean fertility
+                rate are defined in the same way as before, though the weighted means
+                are computed for each region instead of for the entire world. Refer
+                to the legend on the right to see what each bar represents. 
+            </p>
+
+            <p style="font-size:24px;">
+                On this bar chart, it is clear that different regions have different
+                fertility rates. As you vary the year using the slider, you can see
+                that every region has experienced a decrease in fertility rate over
+                time, though some regions have seen more change than others. The region
+                of North America and the region of Europe & Central Asia started out
+                with fairly low fertility rates, ended up with low fertility rates,
+                experiencing only a moderate decline. The regions of Latin America &
+                Caribbean, South Asia, and Middle East & North Africa started out with
+                high fertility rates and ended up with ones that were low to moderate-low.
+                Sub-Saharan Africa started out with the highest fertility rates,
+                experienced a moderate decline, and ended up with the highest fertility rates.
+                East Asia & Pacific started out with moderate-high fertility rates,
+                and ended up with the lowest ones, after experiencing a massive decline.
+                On the next slide, I propose a factor which may be associated with
+                these declines in fertility rates, and help to explain some of the regional
+                patterns seen here.
+            </p>
 
             <a id="prevLink" style="font-size:30px;" href="index.html">Previous Slide</a>
             <a id="nextLink" style="font-size:30px;float:right;" href="page3.html">Next Slide</a>
