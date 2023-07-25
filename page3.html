@@ -1,21 +1,27 @@
 <html lang="en-US">
 	<head>
 		<title>CS 416 Narrative Visualization Project</title>
+
+        <!-- Importing d3 -->
 		<script src='https://d3js.org/d3.v5.min.js'></script>
   	</head>
 	<body onload="init()">
+        <!-- I will make my plot and legend here -->
         <div id="visualizationDiv">
-			<svg id="svgForPlot" width=600 height=600></svg>
+			<svg id="svgForPlot"></svg>
             <svg id="svgForLegend" height=375 width=350></svg>
 		</div>
 
         <div id="sliderDiv">
             <!--https://stackoverflow.com/a/18936328-->
+            <!-- Here, I make a slider for controlling the year to plot data for -->
+            <!-- The current year will be printed next to it -->
             <p style="display:inline">Year: </p>
             <input id="yearSlider" type="range" step="1" value="2021" min="1960" max="2021" oninput="yearChanged()" />
             <output id="yearSliderOutput">2021</output>
         </div>
 
+        <!-- This contains my various text elements -->
 		<div id="textDiv" style="width:900px;">
             <p id="tooltipDescriptor" style="font-size:150%;">Mouse over a point to see exact data values. Click on a point to see more information about the country it represents.</p>
 
@@ -82,6 +88,7 @@
                 reach a page where charts enabling that analysis will be present.
             </p>
 
+            <!-- My link to the previous slide -->
 			<a id="prevLink" style="font-size:30px;" href="page2.html">Previous Slide</a>
 		</div>
 	</body>
@@ -112,8 +119,11 @@
 
         // initialize the various variables needed
         var data;
-        var xScale = d3.scaleLog().domain([1, 450]).range([0, 400])
-		var yScale = d3.scaleLinear().domain([0, 9]).range([400, 0])
+        var height = 400;
+        var width = 400;
+        var margin = 100;
+        var xScale = d3.scaleLog().domain([1, 450]).range([0, width])
+		var yScale = d3.scaleLinear().domain([0, 9]).range([height, 0])
         var colorScale = d3.scaleOrdinal()
                            .domain(["East Asia & Pacific",
                                     "North America",
@@ -138,11 +148,11 @@
             // Add the axes
 			d3.select("#svgForPlot")
 			  .append("g")
-			  .attr("transform", "translate(100, 100)")
+			  .attr("transform", "translate(" + margin + "," + margin + ")")
 			  .call(d3.axisLeft(yScale));
 			d3.select("#svgForPlot")
 			  .append("g")
-			  .attr("transform", "translate(100, 500)")
+			  .attr("transform", "translate(" + margin + "," + (margin + width) + ")")
 			  .call(d3.axisBottom(xScale)
 					  .tickValues([10, 20, 50, 100, 200, 300, 400])
 					  .tickFormat(d3.format("~s")));
@@ -183,9 +193,8 @@
               .attr("font-size", "30px")
               .text(`vs Fertility Rate (${yearToDisplay})`);
 
-
-
-            // Code to create the color legend
+            // Create the legend telling you which region each color
+            // refers to
             // https://d3-graph-gallery.com/graph/custom_legend.html (Categorical legend: square)
             // select the svg area
             var svgForLegend = d3.select("#svgForLegend")
@@ -232,6 +241,9 @@
             renderPoints(data)
 		}
 
+        // Function for rendering the points. This is called when entering
+        // this page, as well as when you change which year to display
+        // data for
         function renderPoints() {
             // get the data corresponding to the year currently being displayed
             var dataToPlot = data.filter(function(d) { return d.Year == yearToDisplay })
@@ -245,10 +257,10 @@
 
             // Plot the new points for the year whose data is currently being displayed
 			d3.select("#svgForPlot")
-			  .attr("width", 400 + 2 * 100)
-			  .attr("height", 400 + 2 * 100)
+			  .attr("width", width + 2 * margin)
+			  .attr("height", height + 2 * margin)
 			  .append("g")
-			  .attr("transform","translate(100, 100)")
+			  .attr("transform", "translate(" + margin + "," + margin + ")")
 			  .selectAll("circle")
 			  .data(dataToPlot)
 			  .enter()
@@ -261,7 +273,12 @@
               .style("fill", function(d) {return colorScale(d.Region);})
               .on("mouseover",
                   function(d) {
-                    //   console.log(this.id);
+                      // When you mouse over a circle, the exact values (within
+                      // 2 decimal places) of fertility and early childhood 
+                      // mortality rate for that country in the current year
+                      // will be displayed
+                      // The other circles will be made faint, to make
+                      // the moused-over circle more obvious
                       document.getElementById("tooltipDescriptor")
                         .innerHTML = `In ${yearToDisplay}, ${d.CountryName} had a fertility rate of ${d.FertilityRate} and ${d.Under5DeathsPer1000} deaths under 5 for every 1,000 live births.`;
                       d3.selectAll("circle")
@@ -270,6 +287,9 @@
                         })
                         .attr("fill-opacity", "0.1");
                     
+                      // We make dashed lines from each axis to the point being
+                      // moused over, to make it more obvious what you are
+                      // pointing to
                       var xCoordForLine = this.cx["baseVal"]["value"] + 100;
                       var yCoordForLine = this.cy["baseVal"]["value"] + 100;
                       // https://stackoverflow.com/a/26419079/
@@ -299,11 +319,18 @@
               )
               .on("mouseout",
                   function() {
+                      // When you stop mousing over a point, go 
+                      // back to prompting the user to mouse over points
+                      // to see exact data values
                       document.getElementById("tooltipDescriptor")
                           .innerHTML = "Mouse over a point to see exact data values. Click on a point to see more information about the country it represents.";
+                      
+                      // Make the other circles stop being faint
                       d3.selectAll("circle")
                         .attr("fill-opacity", "1");
 
+                      // remove the dashed lines pointing at the point
+                      // being moused over
                       d3.select("#tooltipVerticalLine")
                         .remove();
                       d3.select("#tooltipHorizontalLine")
@@ -312,16 +339,18 @@
               )
               .on("click",
                   function(d) {
+                      // When you click on a point, go to a page that shows how
+                      // fertility rate and early childhood mortality rate
+                      // have varied over time for that country
                       window.location.href = `specific_country_line_chart.html?Year=${yearToDisplay}&Country=${d.CountryName}`;
                   }
               );
 
-
-            // console.log(d3.voronoi)
-
             // // One of the lectures provided the link below, which
             // // talks about how to implement Voronoi regions
             // // https://www.visualcinnamon.com/2015/07/voronoi/
+            // // I could not get the voronoi stuff to work, and I could not 
+            // // find much documentation about it online
             // var voronoi = d3.geom.voronoi()
             //                 .x(function(d) { return xScale(d.Under5DeathsPer1000); })
             //                 .y(function(d) { return yScale(d.FertilityRate); })
@@ -341,10 +370,10 @@
             //     .style("pointer-events", "all");
             //     // .on("mouseover", showTooltip)
             //     // .on("mouseout",  removeTooltip);
-
-
         }
 
+        // Called whenever the user changes which year to display data for
+        // in the slider
         function yearChanged() {
             // Get the new year for which we will show data
             yearToDisplay = document.getElementById("yearSlider").value;

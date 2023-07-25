@@ -64,7 +64,6 @@
         // We will display information about 2021 by default, but will check
         // to see if another valid year was passed in as a parameter in the URL
         // if so, we will use that year instead
-        // if not, we will just use the default year of 2021
         var yearToDisplay = document.getElementById("yearSlider").value;
         var urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has("Year")) {
@@ -117,6 +116,7 @@
                                    "orange",
                                    "red"]);
 
+        // Function used to display everything initially
         async function init() {
             // load the data
 			data = await d3.csv("https://raw.githubusercontent.com/jbao8899/CS-416-Narrative-Visualization-Project/main/project_2_data.csv");
@@ -208,8 +208,9 @@
             renderBars();
 		}
 
-        // Function by rendering the bars. This is called when entering this page,
-        // and when you change which year to display data for
+        // Function for rendering the bars. This is called when entering
+        // this page, as well as when you change which year to display
+        // data for
         function renderBars() {
             // get the data corresponding to the year currently being displayed 
             var dataToPlot = data.filter(function(d) { return d.Year == yearToDisplay })
