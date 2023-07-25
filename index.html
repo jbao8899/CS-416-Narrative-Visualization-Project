@@ -74,6 +74,7 @@
         var width = 400;
         var margin = 100;
         var xScale = d3.scaleLinear().domain([1960, 2021]).range([0, width]);
+        // the inverse scale is needed for interactivity
         var inverseXScale = d3.scaleLinear().domain([0, width]).range([1960, 2021]);
         var yScale = d3.scaleLinear().domain([0, 9]).range([width, 0])
         tooltip = d3.select("#tooltip")
@@ -156,7 +157,7 @@
 			  .attr("width", width + 2 * margin)
 			  .attr("height", height + 2 * margin)
 			  .append("g")
-			  .attr("transform", "translate(" + margin + "," + margin + ")")
+			  .attr("transform", `translate(${margin}, ${margin})`)
               .append("path")
               .datum(data)
               .attr("fill", "none")
@@ -171,11 +172,11 @@
             // Plot the axes
             d3.select("#svgForPlot")
 			  .append("g")
-			  .attr("transform", "translate(" + margin + "," + margin + ")")
+			  .attr("transform", `translate(${margin}, ${margin})`)
 			  .call(d3.axisLeft(yScale));
 			d3.select("#svgForPlot")
 			  .append("g")
-			  .attr("transform", "translate(" + margin + "," + (width + margin) + ")")
+			  .attr("transform", `translate(${margin}, ${margin + width})`)
 			  .call(d3.axisBottom(xScale)
                       .tickFormat(d3.format("d")));
 

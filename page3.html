@@ -148,11 +148,11 @@
             // Add the axes
 			d3.select("#svgForPlot")
 			  .append("g")
-			  .attr("transform", "translate(" + margin + "," + margin + ")")
+			  .attr("transform", `translate(${margin}, ${margin})`)
 			  .call(d3.axisLeft(yScale));
 			d3.select("#svgForPlot")
 			  .append("g")
-			  .attr("transform", "translate(" + margin + "," + (margin + width) + ")")
+			  .attr("transform", `translate(${margin}, ${margin + height})`)
 			  .call(d3.axisBottom(xScale)
 					  .tickValues([10, 20, 50, 100, 200, 300, 400])
 					  .tickFormat(d3.format("~s")));
@@ -260,7 +260,7 @@
 			  .attr("width", width + 2 * margin)
 			  .attr("height", height + 2 * margin)
 			  .append("g")
-			  .attr("transform", "translate(" + margin + "," + margin + ")")
+			  .attr("transform", `translate(${margin}, ${margin})`)
 			  .selectAll("circle")
 			  .data(dataToPlot)
 			  .enter()

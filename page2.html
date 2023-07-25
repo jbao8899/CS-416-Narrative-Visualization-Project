@@ -124,11 +124,11 @@
             // Plot the axes
 			d3.select("#svgForPlot")
 			  .append("g")
-			  .attr("transform", "translate(" + margin + "," + margin + ")")
+			  .attr("transform", `translate(${margin}, ${margin})`)
 			  .call(d3.axisLeft(yScale));
 			d3.select("#svgForPlot")
 			  .append("g")
-			  .attr("transform", "translate(" + margin + "," + (margin + width) + ")")
+			  .attr("transform", `translate(${margin}, ${margin + height})`)
 			  .call(d3.axisBottom(xScale)
 					  .tickFormat(""));
 
@@ -315,7 +315,7 @@
 			  .attr("width", width + 2 * margin)
 			  .attr("height", height + 2 * margin)
 			  .append("g")
-			  .attr("transform", "translate(" + margin + "," + margin + ")")
+			  .attr("transform", `translate(${margin}, ${margin})`)
 			  .selectAll("rect")
 			  .data(dataToPlot)
 			  .enter()
