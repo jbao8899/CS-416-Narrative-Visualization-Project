@@ -1,21 +1,20 @@
-<!--https://d3-graph-gallery.com/graph/basic_datamanipulation.html very good-->
-
 <html lang="en-US">
 	<head>
 		<title>CS 416 Narrative Visualization Project</title>
+
+        <!-- Importing d3 -->
 		<script src='https://d3js.org/d3.v5.min.js'></script>
   	</head>
     <body onload='init()'>
+        <!-- I will make my plot here -->
         <div id="visualizationDiv">
-            <svg id="svgForPlot" width=600 height=600></svg>
+            <svg id="svgForPlot"></svg>
         </div>
 
+        <!-- This contains my various text elements -->
         <div id="textDiv" style="width:900px;">
             <p id="tooltipDescriptor" style="font-size:150%;">Mouse over the chart to see exact data values</p>
 
-            <!-- <br /> -->
-
-            <!-- <p id="text" style="font-size:24px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p> -->
             <p style="font-size:24px;">
                 The chart above displays the weighted mean fertility rate for the
                 whole world, for each year between 1960 and 2021 (inclusive).
@@ -42,21 +41,19 @@
                 appears to be connected to it.
             </p>
 
-            <!-- <br /> -->
-
+            <!-- My link to the next page -->
             <a id="nextLink" style="font-size:30px;float:right;" href="page2.html">Next Slide</a>
         </div>
-
-        <div id="linkDiv">
-        </div>
-
-        <!-- <div id="tooltip" style="opacity:0;position:absolute"></div> -->
     </body>
 	<script>
         // Although information for all years is shown here, we want to
-        // remember what year was being displayed if we come here from
-        // one of the upcoming slides
-        var yearToDisplay = 2020;
+        // remember what year was being displayed if we arrived here by
+        // going back from one of the upcoming slides
+        // Here, we see if there is information about the year
+        // in the URL. If there is, and it is a valid year between
+        // 1960 and 2021 (inclusive), we use it as the year. If not, we
+        // set the year to 2021.
+        var yearToDisplay = 2021;
         var urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has("Year")) {
             var parsedYear = parseInt(urlParams.get("Year"));
@@ -64,7 +61,6 @@
                 1960 <= parsedYear &&
                 parsedYear<= 2021) {
                 
-                // Display data for the year specified in the URL
                 yearToDisplay = parsedYear;
 
                 // remember what year to display when moving to other pages
@@ -74,13 +70,17 @@
 
         // initialize the various variables needed
         var data;
-        var xScale = d3.scaleLinear().domain([1960, 2021]).range([0, 400]);
-        var inverseXScale = d3.scaleLinear().domain([0, 400]).range([1960, 2021]);
-        var yScale = d3.scaleLinear().domain([0, 9]).range([400, 0])
+        var height = 400;
+        var width = 400;
+        var margin = 100;
+        var xScale = d3.scaleLinear().domain([1960, 2021]).range([0, width]);
+        var inverseXScale = d3.scaleLinear().domain([0, width]).range([1960, 2021]);
+        var yScale = d3.scaleLinear().domain([0, 9]).range([width, 0])
         tooltip = d3.select("#tooltip")
 
         // Make an object mapping from years to weighted mean fertility rate
         // values will be set in init()
+        // this is used for interactivity (to print the values being moused over)
         var fertilityDict = { };
 
         async function init() {
@@ -152,8 +152,8 @@
             // for each year
             // https://d3-graph-gallery.com/graph/line_basic.html
             d3.select("#svgForPlot")
-			  .attr("width", 400 + 2 * 100)
-			  .attr("height", 400 + 2 * 100)
+			  .attr("width", width + 2 * margin)
+			  .attr("height", height + 2 * margin)
 			  .append("g")
 			  .attr("transform","translate(100, 100)")
               .append("path")
@@ -170,11 +170,11 @@
             // Plot the axes
             d3.select("#svgForPlot")
 			  .append("g")
-			  .attr("transform", "translate(100, 100)")
+			  .attr("transform", "translate(" + margin + "," + margin + ")")
 			  .call(d3.axisLeft(yScale));
 			d3.select("#svgForPlot")
 			  .append("g")
-			  .attr("transform", "translate(100, 500)")
+			  .attr("transform", "translate(" + margin + "," + (width + margin) + ")")
 			  .call(d3.axisBottom(xScale)
                       .tickFormat(d3.format("d")));
 
@@ -206,17 +206,18 @@
               .attr("font-size", "30px")
               .text("Global Fertility Rate Over Time");
             
+            // Add interactivity
             d3.select("#svgForPlot")
               .on("mouseover mousemove",
                   function() {
-                      if (100 <= d3.event.pageX &&
-                          d3.event.pageX <= 500 &&
-                          100 <= d3.event.pageY &&
-                          d3.event.pageY <= 500) {
-
-                          //   console.log("Mousing over plot");
-                          //   console.log(d3.event.pageX);
-                          //   console.log(d3.event.pageY);
+                      // if you are within the plot area,
+                      // show a vertical dashed line where the mouse
+                      // is, and print the year and global weighted
+                      // mean fertility for that year below the plot
+                      if (margin <= d3.event.pageX &&
+                          d3.event.pageX <= (width + margin) &&
+                          margin <= d3.event.pageY &&
+                          d3.event.pageY <= (height + margin)) {
                           
                           d3.select("#tooltipLine")
                             .remove();
@@ -226,25 +227,26 @@
                             .append("line")
                             .attr("x1", d3.event.pageX)
                             .attr("x2", d3.event.pageX)
-                            .attr("y1", 100)
-                            .attr("y2", 500)
+                            .attr("y1", margin)
+                            .attr("y2", height + margin)
                             .style("stroke", "black")
                             .style("stroke-width", 1)
                             .style("fill", "none")
                             .style("stroke-dasharray", "5,5")
                             .attr("id", "tooltipLine");
 
-                          var roundedYear = Math.round(inverseXScale(d3.event.pageX - 100));
+                          var roundedYear = Math.round(inverseXScale(d3.event.pageX - margin));
                           document.getElementById("tooltipDescriptor")
                                   .innerHTML = `In ${roundedYear}, the global weighted mean fertility rate was ${Math.round(fertilityDict[roundedYear] * 100) / 100} children per woman.`;
-                          //   var xInsidePlot = d3.event.pageX - 100;
-                          //   var yearHoveringOver = parseInt(inverseXScale(xInsidePlot));
-                          //   console.log(fertilityDict[yearHoveringOver]);
                       }                    
                   }
               )
               .on("mouseout",
                   function() {
+                      // if the mouse leaves the plot, remove the vertical
+                      // dashed line and go back to prompting the user
+                      // that they can see exact data values by mousing
+                      // over the plot
                       d3.select("#tooltipLine")
                           .remove();
                       document.getElementById("tooltipDescriptor")
