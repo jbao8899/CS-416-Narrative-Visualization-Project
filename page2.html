@@ -1,21 +1,27 @@
 <html lang="en-US">
 	<head>
 		<title>CS 416 Narrative Visualization Project</title>
+
+        <!-- Importing d3 -->
 		<script src='https://d3js.org/d3.v5.min.js'></script>
   	</head>
     <body onload='init()'>
+        <!-- I will make my plot and legend here -->
         <div id="visualizationDiv">
-            <svg id="svgForPlot" width=600 height=600></svg>
+            <svg id="svgForPlot" ></svg>
             <svg id="svgForLegend" height=375 width=350></svg>
         </div>
 
         <div id="sliderDiv">
             <!--https://stackoverflow.com/a/18936328-->
+            <!-- Here, I make a slider for controlling the year to plot data for -->
+            <!-- The current year will be printed next to it -->
             <p style="display:inline">Year: </p>
             <input id="yearSlider" type="range" step="1" value="2021" min="1960" max="2021" oninput="yearChanged()" />
             <output id="yearSliderOutput">2021</output>
         </div>
 
+        <!-- This contains my various text elements -->
         <div id="textDiv" style="width:900px;">
             <p id="tooltipDescriptor" style="font-size:150%;">Mouse over the bars to see exact data values</p>
 
@@ -48,6 +54,7 @@
                 patterns seen here.
             </p>
 
+            <!-- My link to the previous slide and next slide -->
             <a id="prevLink" style="font-size:30px;" href="index.html">Previous Slide</a>
             <a id="nextLink" style="font-size:30px;float:right;" href="page3.html">Next Slide</a>
         </div>
@@ -55,8 +62,9 @@
 
 	<script>
         // We will display information about 2021 by default, but will check
-        // to see if another valid year was passed in as a parameter.
+        // to see if another valid year was passed in as a parameter in the URL
         // if so, we will use that year instead
+        // if not, we will just use the default year of 2021
         var yearToDisplay = document.getElementById("yearSlider").value;
         var urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has("Year")) {
@@ -80,6 +88,9 @@
 
         // initialize the various other variables needed
         var data;
+        var height = 400;
+        var width = 400;
+        var margin = 100;
         var xScale = d3.scaleBand()
                        .domain(["East Asia & Pacific",
                                 "North America",
@@ -88,8 +99,8 @@
                                 "South Asia",
                                 "Middle East & North Africa",
                                 "Sub-Saharan Africa"])
-                       .range([0, 400])
-		var yScale = d3.scaleLinear().domain([0, 9]).range([400, 0])
+                       .range([0, width])
+		var yScale = d3.scaleLinear().domain([0, 9]).range([height, 0])
         var colorScale = d3.scaleOrdinal()
                            .domain(["East Asia & Pacific",
                                     "North America",
@@ -113,11 +124,11 @@
             // Plot the axes
 			d3.select("#svgForPlot")
 			  .append("g")
-			  .attr("transform", "translate(100, 100)")
+			  .attr("transform", "translate(" + margin + "," + margin + ")")
 			  .call(d3.axisLeft(yScale));
 			d3.select("#svgForPlot")
 			  .append("g")
-			  .attr("transform", "translate(100, 500)")
+			  .attr("transform", "translate(" + margin + "," + (margin + width) + ")")
 			  .call(d3.axisBottom(xScale)
 					  .tickFormat(""));
 
@@ -149,7 +160,8 @@
               .attr("font-size", "30px")
               .text(`Regional Fertility Rates (${yearToDisplay})`);
 
-            // Create the legend
+            // Create the legend telling you which region each color (and bar)
+            // refers to
             // https://d3-graph-gallery.com/graph/custom_legend.html (Categorical legend: square)
             // select the svg area
             var svgForLegend = d3.select("#svgForLegend")
@@ -175,10 +187,10 @@
                         .enter()
                         .append("rect")
                         .attr("x", 100)
-                        .attr("y", function(d,i){ return i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+                        .attr("y", function(d, i) { return i * (size + 5) }) // 100 is where the first dot appears. 25 is the distance between dots
                         .attr("width", size)
                         .attr("height", size)
-                        .style("fill", function(d){ return colorScale(d)})
+                        .style("fill", function(d) { return colorScale(d) })
 
             // Add the name of each region
             svgForLegend.selectAll("mylabels")
@@ -196,6 +208,8 @@
             renderBars();
 		}
 
+        // Function by rendering the bars. This is called when entering this page,
+        // and when you change which year to display data for
         function renderBars() {
             // get the data corresponding to the year currently being displayed 
             var dataToPlot = data.filter(function(d) { return d.Year == yearToDisplay })
@@ -295,23 +309,26 @@
                 return d3.ascending(a.OrderVar, b.OrderVar)
             })
 
-
             // Plot the bars
 			d3.select("#svgForPlot")
-			  .attr("width", 400 + 2 * 100)
-			  .attr("height", 400 + 2 * 100)
+			  .attr("width", width + 2 * margin)
+			  .attr("height", height + 2 * margin)
 			  .append("g")
-			  .attr("transform","translate(100, 100)")
+			  .attr("transform", "translate(" + margin + "," + margin + ")")
 			  .selectAll("rect")
 			  .data(dataToPlot)
 			  .enter()
 			  .append("rect")
-              .attr("x", function(d, i) { return 14 + ((400 / 7) * i) })
-              .attr("y", function(d) { return 400 - ((d.WeightedMeanFertilityRate / 9) * 400) })
-              .attr("width", 200 / 7)
-              .attr("height", function(d) { return (d.WeightedMeanFertilityRate / 9) * 400 })
+              .attr("x", function(d, i) { return 14 + ((width / 7) * i) })
+              .attr("y", function(d) { return height - ((d.WeightedMeanFertilityRate / 9) * height) })
+              .attr("width", width / (7 * 2))
+              .attr("height", function(d) { return (d.WeightedMeanFertilityRate / 9) * height })
               .style("fill", function(d) {return colorScale(d.Region);})
-              .on("mouseover mousemove",
+              .on("mouseover",
+                  // when you mouse over one of the bars,
+                  // display the exact (rounded to 2 decimal places)
+                  // weighted mean fertility rate in that region in the year
+                  // currently being plotted
                   function(d, i) {
                       var regionNameForPrinting = "";
                     
@@ -338,17 +355,22 @@
                       }
 
                       document.getElementById("tooltipDescriptor")
-                        .innerHTML = `In ${yearToDisplay}, the weighted mean fertility rate in ${regionNameForPrinting} was ${Math.round(d.WeightedMeanFertilityRate * 100) / 100} children per woman.`;
+                              .innerHTML = `In ${yearToDisplay}, the weighted mean fertility rate in ${regionNameForPrinting} was ${Math.round(d.WeightedMeanFertilityRate * 100) / 100} children per woman.`;
                   }                    
               )
               .on("mouseout",
                   function() {
+                      // when you move your mouse off of a bar, go back
+                      // to prompting the user to mouse over bars to see
+                      // exact values
                       document.getElementById("tooltipDescriptor")
                           .innerHTML = "Mouse over the bars to see exact data values";
                   }
               );
         }
 
+        // Called whenever the user changes which year to display data for
+        // in the slider
         function yearChanged() {
             // Get the new year for which we will show data
             yearToDisplay = document.getElementById("yearSlider").value;

@@ -41,7 +41,7 @@
                 appears to be connected to it.
             </p>
 
-            <!-- My link to the next page -->
+            <!-- My link to the next slide -->
             <a id="nextLink" style="font-size:30px;float:right;" href="page2.html">Next Slide</a>
         </div>
     </body>
@@ -155,7 +155,7 @@
 			  .attr("width", width + 2 * margin)
 			  .attr("height", height + 2 * margin)
 			  .append("g")
-			  .attr("transform","translate(100, 100)")
+			  .attr("transform", "translate(" + margin + "," + margin + ")")
               .append("path")
               .datum(data)
               .attr("fill", "none")
