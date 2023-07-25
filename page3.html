@@ -290,14 +290,14 @@
                       // We make dashed lines from each axis to the point being
                       // moused over, to make it more obvious what you are
                       // pointing to
-                      var xCoordForLine = this.cx["baseVal"]["value"] + 100;
-                      var yCoordForLine = this.cy["baseVal"]["value"] + 100;
+                      var xCoordForLine = this.cx["baseVal"]["value"] + margin;
+                      var yCoordForLine = this.cy["baseVal"]["value"] + margin;
                       // https://stackoverflow.com/a/26419079/
                       d3.select("#svgForPlot")
                         .append("line")
                         .attr("x1", xCoordForLine)
                         .attr("x2", xCoordForLine)
-                        .attr("y1", 500)
+                        .attr("y1", height + margin)
                         .attr("y2", yCoordForLine)
                         .style("stroke", "black")
                         .style("stroke-width", 1)
@@ -306,7 +306,7 @@
                         .attr("id", "tooltipVerticalLine");
                       d3.select("#svgForPlot")
                         .append("line")
-                        .attr("x1", 100)
+                        .attr("x1", margin)
                         .attr("x2", xCoordForLine)
                         .attr("y1", yCoordForLine)
                         .attr("y2", yCoordForLine)
@@ -354,7 +354,7 @@
             // var voronoi = d3.geom.voronoi()
             //                 .x(function(d) { return xScale(d.Under5DeathsPer1000); })
             //                 .y(function(d) { return yScale(d.FertilityRate); })
-            //                 .clipExtent([[0, 0], [400, 400]]);
+            //                 .clipExtent([[0, 0], [width, height]]);
             // //Create the voronoi grid
             // svg.selectAll("path")
             //     .data(voronoi(countries)) //Use vononoi() with your dataset inside

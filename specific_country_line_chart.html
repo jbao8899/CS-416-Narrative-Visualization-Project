@@ -1,19 +1,22 @@
-<!--https://d3-graph-gallery.com/graph/basic_datamanipulation.html very good-->
-
 <html lang="en-US">
 	<head>
 		<title>CS 416 Narrative Visualization Project</title>
+
+        <!-- Importing d3 -->
 		<script src='https://d3js.org/d3.v5.min.js'></script>
   	</head>
 	<body onload='init()'>
+        <!-- I will make my two plots here -->
 		<div id="visualizationDiv">
-			<svg id="svgForFertilityPlot" width=600 height=600 style="margin:0px;padding:0px;"></svg>
-            <svg id="svgForMortalityPlot" width=600 height=600 style="margin:0px;padding:0px;"></svg>                 
+			<svg id="svgForFertilityPlot"></svg>
+            <svg id="svgForMortalityPlot"></svg>                 
 		</div>
 		
+        <!-- This contains my various text elements -->
 		<div id="textDiv" style="width:900px;">
             <p id="tooltipDescriptor" style="font-size:150%;">Mouse over a chart to see exact data values</p>
 
+            <!-- The link for going back to the scatterplot slide -->
 			<a id="prevLink" style="font-size:30px;" href="page3.html">Back to Scatterplot</a>
 		</div>	
 	</body>
@@ -21,9 +24,12 @@
         // Although information for all years is shown here, we want to
         // remember what year was being displayed if we come here from
         // slide 3 and then go back
+        // Here, we see if there is information about the year
+        // in the URL. If there is, and it is a valid year between
+        // 1960 and 2021 (inclusive), we use it as the year. If not, we
+        // set the year to 2021.
         var yearToDisplay = 2021;
         var urlParams = new URLSearchParams(window.location.search);
-
         if (urlParams.has("Year")) {
             var parsedYear = parseInt(urlParams.get("Year"));
             if (parsedYear != null &&
@@ -38,6 +44,8 @@
             document.getElementById("prevLink").href = `page3.html?Year=${yearToDisplay}`;
         }
 
+        // Here, we look to see if a country was included in the URL as
+        // a parameter. If not, we will plot information about India
         var country = "India";
         if (urlParams.has("Country")) {
             country = urlParams.get("Country");
@@ -56,9 +64,10 @@
         // Make an object mapping from years to mortality rate
         // values will be set in init()
         var mortalityDict = { };
+        // these will be used for interactivity (to print the values being moused over)
 
+        // Function used to display everything initially
         async function init() {
-
 			// load the data
 			data = await d3.csv("https://raw.githubusercontent.com/jbao8899/CS-416-Narrative-Visualization-Project/main/project_2_data.csv");
 			
@@ -69,8 +78,8 @@
             data = data.filter(function(d) { return d.CountryName == country})
             
             // Check that we have data for the country in question
+            // If we do not, an error message will be displayed
             if (data.length == 0) {
-                // for 2 lines
                 d3.select("#svgForFertilityPlot")
                   .append("text")
                   .attr("class", "error message")
@@ -106,7 +115,9 @@
             //                            "green",
             //                            "orange",
             //                            "red"]);
-            // Above doesn't seem to work?
+            // The above does not work, so I manually assign a color
+            // to the lines based on what region the country being
+            // investigated belongs to.
             var color;
             if (data[0].Region == "East Asia & Pacific") {
                 color = "brown";
@@ -132,6 +143,9 @@
 
             // put the data in dictionaries mapping from years to
             // fertility and mortality rates
+            // These are used for getting exact values of 
+            // fertility and under-5 mortality rate when mousing
+            // over my charts
             for (var i = 0; i < data.length; i++) {
                 fertilityDict[data[i].Year] = data[i].FertilityRate;
                 mortalityDict[data[i].Year] = data[i].Under5DeathsPer1000;
@@ -279,6 +293,10 @@
             d3.select("#svgForFertilityPlot")
               .on("mouseover mousemove",
                   function() {
+                      // if you are within the area of the fertility plot,
+                      // show a vertical dashed line where the mouse
+                      // is, and print the year and fertility rate
+                      // for that year below the plot
                       var mouseCoords = d3.mouse(this);
                       if (100 <= mouseCoords[0] &&
                           mouseCoords[0] <= 500 &&
@@ -332,6 +350,10 @@
             d3.select("#svgForMortalityPlot")
               .on("mouseover mousemove",
                   function() {
+                      // if you are within the area of the mortality plot,
+                      // show a vertical dashed line where the mouse
+                      // is, and print the year and early childhood mortality
+                      // rate for that year below the plot
                       var mouseCoords = d3.mouse(this);
                       if (100 <= mouseCoords[0] &&
                           mouseCoords[0] <= 500 &&
@@ -383,14 +405,6 @@
             //   );
 
             //   d3.select("#svgForFertilityPlot")
-            //   .on("mouseover mousemove",
-            //       function() {
-            //           document.getElementById("tooltipDescriptor")
-            //                   .innerHTML = d3.mouse(this)[0]; //event.pageX;
-            //       }
-            //   )
-
-            //   d3.select("#svgForMortalityPlot")
             //   .on("mouseover mousemove",
             //       function() {
             //           document.getElementById("tooltipDescriptor")
