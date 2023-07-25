@@ -12,8 +12,8 @@
         <div id="sliderDiv">
             <!--https://stackoverflow.com/a/18936328-->
             <p style="display:inline">Year: </p>
-            <input id="yearSlider" type="range" step="1" value="2020" min="1960" max="2021" oninput="yearChanged()" />
-            <output id="yearSliderOutput">2020</output>
+            <input id="yearSlider" type="range" step="1" value="2021" min="1960" max="2021" oninput="yearChanged()" />
+            <output id="yearSliderOutput">2021</output>
         </div>
 
         <div id="textDiv" style="width:900px;">
@@ -267,7 +267,7 @@
             // Having the bars move about as the year changes is confusing,
             // so it is better to do this:
             // I make the bars be in a fixed order
-            // (sorted in ascending order of fertility in 2020)
+            // (sorted in ascending order of fertility in 2021)
             for (var i = 0; i < dataToPlot.length; i++) {
                 if (dataToPlot[i].Region == "East Asia & Pacific") {
                     dataToPlot[i].OrderVar = 1;
